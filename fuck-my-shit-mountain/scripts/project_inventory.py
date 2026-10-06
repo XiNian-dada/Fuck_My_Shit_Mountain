@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from collections import Counter
@@ -165,27 +166,28 @@ SURFACE_LABELS = {
 }
 
 
-def is_excluded(path: Path) -> bool:
-    return any(part in EXCLUDED_DIRS for part in path.parts)
-
-
 def iter_files(root: Path, max_files: int) -> list[Path]:
+    if max_files < 1:
+        raise ValueError("max_files must be positive")
     files: list[Path] = []
-    for path in sorted(root.rglob("*")):
-        if len(files) >= max_files:
-            break
-        if not path.is_file():
-            continue
-        relative = path.relative_to(root)
-        if is_excluded(relative):
-            continue
-        files.append(path)
+    # Prune before descending; materializing rglob would still traverse caches
+    # and dependencies before applying either exclusions or the file limit.
+    for directory, dirs, names in os.walk(root, followlinks=False):
+        dirs[:] = sorted(name for name in dirs if name not in EXCLUDED_DIRS)
+        for name in sorted(names):
+            path = Path(directory) / name
+            if path.is_symlink() or not path.is_file():
+                continue
+            files.append(path)
+            if len(files) >= max_files:
+                return files
     return files
 
 
 def read_text(path: Path, limit: int = 200_000) -> str:
     try:
-        return path.read_text(encoding="utf-8", errors="ignore")[:limit]
+        with path.open(encoding="utf-8", errors="ignore") as stream:
+            return stream.read(limit)
     except OSError:
         return ""
 
@@ -563,6 +565,8 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--max-files", type=int, default=8000, help="Maximum number of files to scan")
     parser.add_argument("--show-modes", action="store_true", help="Show internal audit mode tokens in text output")
     args = parser.parse_args(argv)
+    if args.max_files < 1:
+        parser.error("--max-files must be positive")
 
     root = args.root.resolve()
     if not root.exists() or not root.is_dir():
