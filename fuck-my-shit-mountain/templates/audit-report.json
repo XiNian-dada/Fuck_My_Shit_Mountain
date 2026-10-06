@@ -10,7 +10,10 @@
     "projectMap",
     "coverageMatrix",
     "topRisks",
-    "detailedFindings"
+    "detailedFindings",
+    "dimensionSections",
+    "fixOrder",
+    "quickWins"
   ],
   "properties": {
     "metadata": {
@@ -19,43 +22,71 @@
       "properties": {
         "project": {
           "type": "string",
-          "description": "Project name"
+          "description": "Project name",
+          "minLength": 1
         },
         "auditModes": {
           "type": "array",
           "items": {
             "type": "string",
             "enum": [
-              "full", "incremental", "architecture", "security", "stability",
-              "performance", "testing", "maintainability", "design", "release",
-              "documentation", "observability", "configuration", "data-integrity",
-              "privacy", "accessibility", "supply-chain", "cost", "ai-safety",
-              "fallback", "testing-authenticity", "type-safety", "frontend-state",
-              "backend-api", "dependency-weight", "code-consistency",
-              "comment-coverage", "concurrency"
-            ]
+              "full",
+              "incremental",
+              "architecture",
+              "security",
+              "stability",
+              "performance",
+              "testing",
+              "maintainability",
+              "design",
+              "release",
+              "documentation",
+              "observability",
+              "configuration",
+              "data-integrity",
+              "privacy",
+              "accessibility",
+              "supply-chain",
+              "cost",
+              "ai-safety",
+              "fallback",
+              "testing-authenticity",
+              "type-safety",
+              "frontend-state",
+              "backend-api",
+              "dependency-weight",
+              "code-consistency",
+              "comment-coverage",
+              "concurrency"
+            ],
+            "minLength": 1
           },
-          "minItems": 1
+          "minItems": 1,
+          "uniqueItems": true
         },
         "date": {
           "type": "string",
-          "format": "date"
+          "format": "date",
+          "minLength": 1
         },
         "reviewer": {
           "type": "string",
-          "description": "AI model/version"
+          "description": "AI model/version",
+          "minLength": 1
         },
         "commitHash": {
-          "type": "string",
-          "description": "Git commit hash at audit time"
+          "type": ["string", "null"],
+          "description": "Audited commit hash, or null outside a Git repository. Record dirty worktree state in scope."
         },
         "scope": {
           "type": "string",
-          "description": "Audit scope if limited (optional)"
+          "description": "Audit scope if limited (optional)",
+          "minLength": 1
         },
         "reportLanguage": {
           "type": "string",
-          "description": "Language used in report"
+          "description": "Language used in report",
+          "minLength": 1
         }
       }
     },
@@ -65,7 +96,8 @@
       "properties": {
         "text": {
           "type": "string",
-          "description": "2-3 paragraph summary of codebase condition"
+          "description": "2-3 paragraph summary of codebase condition",
+          "minLength": 1
         }
       }
     },
@@ -77,32 +109,32 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["name", "score", "grade", "justification"],
+            "required": ["name", "score", "grade", "justification", "coverageConfidence"],
             "properties": {
               "name": {
                 "type": "string",
-                "enum": [
-                  "Security", "Stability", "Performance", "Testing",
-                  "Maintainability", "Design", "Release"
-                ]
+                "enum": ["Security", "Stability", "Performance", "Testing", "Maintainability", "Design", "Release"],
+                "minLength": 1
               },
               "score": {
-                "type": "number",
+                "type": ["number", "null"],
                 "minimum": 0,
                 "maximum": 10,
                 "description": "Score 0.0-10.0, higher is better"
               },
               "grade": {
-                "type": "string",
-                "enum": ["S", "A", "B", "C", "D", "F"]
+                "type": ["string", "null"],
+                "enum": ["S", "A", "B", "C", "D", "F", null]
               },
               "justification": {
                 "type": "string",
-                "description": "One-sentence justification referencing strongest evidence"
+                "description": "One-sentence justification referencing strongest evidence",
+                "minLength": 1
               },
               "coverageConfidence": {
                 "type": "string",
-                "enum": ["High", "Medium", "Low", "Not assessed"]
+                "enum": ["High", "Medium", "Low", "Not assessed"],
+                "minLength": 1
               }
             }
           }
@@ -112,19 +144,19 @@
           "required": ["score", "grade"],
           "properties": {
             "score": {
-              "type": "number",
+              "type": ["number", "null"],
               "minimum": 0,
               "maximum": 10
             },
             "grade": {
-              "type": "string",
-              "enum": ["S", "A", "B", "C", "D", "F"]
+              "type": ["string", "null"],
+              "enum": ["S", "A", "B", "C", "D", "F", null]
             }
           }
         },
         "intelligentWeights": {
           "type": "object",
-          "description": "Inferred dimension weights based on project characteristics (optional)",
+          "description": "Optional weights only when requested by the user; otherwise overall is an unweighted mean of assessed dimensions.",
           "properties": {
             "weights": {
               "type": "object",
@@ -136,9 +168,11 @@
             },
             "reasoning": {
               "type": "string",
-              "description": "Explanation of weight inference based on detected project characteristics"
+              "description": "Requested weighting policy and its rationale; normalize over assessed dimensions only.",
+              "minLength": 1
             }
-          }
+          },
+          "required": ["weights", "reasoning"]
         }
       }
     },
@@ -154,7 +188,8 @@
             "properties": {
               "severity": {
                 "type": "string",
-                "enum": ["Critical", "High", "Medium", "Low", "Info"]
+                "enum": ["Critical", "High", "Medium", "Low", "Info"],
+                "minLength": 1
               },
               "count": {
                 "type": "integer",
@@ -169,7 +204,9 @@
                 "minimum": 0
               }
             }
-          }
+          },
+          "minItems": 5,
+          "maxItems": 5
         },
         "total": {
           "type": "object",
@@ -197,19 +234,22 @@
       "properties": {
         "structure": {
           "type": "string",
-          "description": "How the project is structured"
+          "description": "How the project is structured",
+          "minLength": 1
         },
         "keyComponents": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "description": "Entry points, data flow, state ownership, persistence, external interfaces"
         },
         "riskAreas": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "description": "Areas most likely to contain risks"
         }
@@ -222,19 +262,23 @@
         "required": ["dimension", "coverage", "evidenceInspected", "exclusions"],
         "properties": {
           "dimension": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "coverage": {
             "type": "string",
-            "enum": ["High", "Medium", "Low", "Not assessed"]
+            "enum": ["High", "Medium", "Low", "Not assessed"],
+            "minLength": 1
           },
           "evidenceInspected": {
             "type": "string",
-            "description": "Files, commands, patterns, runtime surfaces"
+            "description": "Files, commands, patterns, runtime surfaces",
+            "minLength": 1
           },
           "exclusions": {
             "type": "string",
-            "description": "What was not inspected and why"
+            "description": "What was not inspected and why",
+            "minLength": 1
           }
         }
       }
@@ -243,26 +287,30 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["title", "severity", "summary"],
+        "required": ["title", "severity", "summary", "findingId"],
         "properties": {
           "title": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "severity": {
             "type": "string",
-            "enum": ["Critical", "High", "Medium", "Low", "Info"]
+            "enum": ["Critical", "High", "Medium", "Low", "Info"],
+            "minLength": 1
           },
           "summary": {
             "type": "string",
-            "description": "One-sentence summary"
+            "description": "One-sentence summary",
+            "minLength": 1
           },
           "findingId": {
             "type": "string",
-            "description": "Reference to detailed finding"
+            "description": "Reference to detailed finding",
+            "minLength": 1
           }
         }
       },
-      "minItems": 1,
+      "minItems": 0,
       "maxItems": 15
     },
     "detailedFindings": {
@@ -282,138 +330,124 @@
           "userVisibleImpact",
           "minimalFix",
           "regressionTestSuggestion",
-          "estimatedEffort"
+          "estimatedEffort",
+          "problem"
         ],
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique finding identifier"
+            "description": "Unique finding identifier",
+            "minLength": 1
           },
           "title": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "severity": {
             "type": "string",
-            "enum": ["Critical", "High", "Medium", "Low", "Info"]
+            "enum": ["Critical", "High", "Medium", "Low", "Info"],
+            "minLength": 1
           },
           "confidence": {
             "type": "string",
-            "enum": ["High", "Medium", "Low"]
+            "enum": ["High", "Medium", "Low"],
+            "minLength": 1
           },
           "category": {
             "type": "string",
-            "description": "Primary dimension category"
+            "description": "Primary dimension category",
+            "minLength": 1
           },
           "status": {
             "type": "string",
-            "enum": ["Confirmed", "Suspected"]
+            "enum": ["Confirmed", "Suspected"],
+            "minLength": 1
           },
           "affectedArea": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "evidence": {
             "type": "object",
             "required": ["file", "functionOrModule", "relevantBehavior"],
             "properties": {
               "file": {
-                "type": "string"
+                "type": "string",
+                "minLength": 1
               },
               "lineNumbers": {
-                "type": "string"
+                "type": "string",
+                "minLength": 1
               },
               "functionOrModule": {
-                "type": "string"
+                "type": "string",
+                "minLength": 1
               },
               "relevantBehavior": {
-                "type": "string"
+                "type": "string",
+                "minLength": 1
               }
             }
           },
           "failureTrigger": {
             "type": "string",
-            "description": "What triggers this issue (optional)"
+            "description": "What triggers this issue (optional)",
+            "minLength": 1
           },
           "failureScenario": {
             "type": "string",
-            "description": "Realistic failure scenario"
+            "description": "Realistic failure scenario",
+            "minLength": 1
           },
           "userVisibleImpact": {
-            "type": "string"
+            "type": "string",
+            "description": "Why the issue matters: user-visible impact or concrete engineering cost.",
+            "minLength": 1
           },
           "minimalFix": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "betterLongTermFix": {
             "type": "string",
-            "description": "Optional better long-term solution"
+            "description": "Optional better long-term solution",
+            "minLength": 1
           },
           "regressionTestSuggestion": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "estimatedEffort": {
             "type": "string",
-            "description": "e.g., '30 minutes', '2 hours', '1 day'"
+            "description": "e.g., '30 minutes', '2 hours', '1 day'",
+            "minLength": 1
+          },
+          "problem": {
+            "type": "string",
+            "description": "Concrete problem explained by the evidence",
+            "minLength": 1
           }
         }
       }
     },
     "dimensionSections": {
       "type": "object",
-      "description": "Dimension-specific analysis sections (optional, depends on audit mode)",
-      "properties": {
-        "architecture": {
-          "type": "object"
-        },
-        "security": {
-          "type": "object"
-        },
-        "stability": {
-          "type": "object"
-        },
-        "performance": {
-          "type": "object"
-        },
-        "testing": {
-          "type": "object"
-        },
-        "maintainability": {
-          "type": "object"
-        },
-        "design": {
-          "type": "object"
-        },
-        "release": {
-          "type": "object"
-        },
-        "documentation": {
-          "type": "object"
-        },
-        "observability": {
-          "type": "object"
-        },
-        "configuration": {
-          "type": "object"
-        },
-        "dataIntegrity": {
-          "type": "object"
-        },
-        "privacy": {
-          "type": "object"
-        },
-        "accessibility": {
-          "type": "object"
-        },
-        "supplyChain": {
-          "type": "object"
-        },
-        "cost": {
-          "type": "object"
-        },
-        "aiSafety": {
-          "type": "object"
-        },
-        "concurrency": {
-          "type": "object"
+      "description": "One analysis per selected focused dimension, keyed by canonical mode ID; include Not assessed explanations.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["summary"],
+        "properties": {
+          "summary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verifiedChecks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
       }
     },
@@ -428,11 +462,13 @@
             "minimum": 1
           },
           "findingId": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "reason": {
             "type": "string",
-            "description": "Why this should be fixed in this order"
+            "description": "Why this should be fixed in this order",
+            "minLength": 1
           }
         }
       }
@@ -444,13 +480,16 @@
         "required": ["findingId", "effort", "impact"],
         "properties": {
           "findingId": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "effort": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "impact": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           }
         }
       }
