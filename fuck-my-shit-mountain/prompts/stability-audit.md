@@ -60,29 +60,10 @@ Focus on reliability, runtime safety, state consistency, and failure recovery.
 2. For each issue, describe the trigger, the failure scenario, and the user-visible impact.
 3. Prefer the minimal fix that removes the crash or inconsistency risk.
 
-## Attitude
-
-1. **Be exhaustively systematic.** Check in-scope error paths, panic/unwrap paths, timeout behavior, lifecycle edges, and recovery paths. Follow the skill's coverage strategy and document exclusions honestly.
-2. **Do not be a yes-man.** Do not skip issues because "it works in practice." Report every realistic crash path.
-
-
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Stability
-- Status: Confirmed / Suspected
-- Affected area:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
+Include these additional details when they help substantiate a finding:
+
 - Failure trigger:
-- Failure scenario:
-- User-visible impact:
-- Minimal fix:
-- Better long-term fix:
-- Regression test suggestion:
-- Estimated effort:

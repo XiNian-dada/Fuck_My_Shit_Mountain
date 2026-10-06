@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="[[LANGUAGE_TAG]]">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>[[PROJECT]] 审计报告</title>
+<title>[[REPORT_TITLE]]</title>
 <style>
   :root {
     --sidebar-bg: #1a1f2e;
@@ -136,622 +136,135 @@
 </style>
 </head>
 <body>
-
-<nav class="sidebar">
-  <div class="sidebar-header">
-    <h1>[[PROJECT]]</h1>
-    <div class="sub">[[AUDIT_MODE_LABEL]] · [[DATE]]</div>
-  </div>
+<!-- Replace all placeholders, localize visible labels, and escape evidence text as HTML.
+     Repeat dimension and finding blocks for actual data; remove unused sample blocks.
+     Preserve section IDs, data-finding, data-field, and data-stat attributes. -->
+<nav class="sidebar" aria-label="[[NAV_LABEL]]">
+  <div class="sidebar-header"><h1>[[PROJECT]]</h1><div class="sub">[[MODES]] · [[DATE]]</div></div>
   <div class="sidebar-nav">
-    <!--
-      CRITICAL: Generate ONE <a> per section in the report — only include
-      sections for the dimensions the user actually selected. For example:
-      - User chose "full"              → all sections below: summary, executive-summary, coverage, findings,
-        security, stability, performance, testing, maintainability, architecture,
-        design, release, documentation, configuration, observability,
-        data-integrity, privacy, accessibility, supply-chain, cost, ai-safety,
-        fallback, testing-authenticity, type-safety, frontend-state, backend-api,
-        dependency-weight, code-consistency, comment-coverage, principles, fix-order
-      - User chose "security, release" → only summary, findings, security,
-        release, principles, fix-order
-      - User chose "frontend-state"    → only summary, findings, frontend-state,
-        principles, fix-order
-
-      Use the same icon + label pattern. Match href to the section's id.
-    -->
-    <a href="#summary"><span class="icon">📊</span> [[SUMMARY_LABEL]]</a>
-    <a href="#executive-summary"><span class="icon">📝</span> [[EXECUTIVE_SUMMARY_LABEL]]</a>
-    <a href="#coverage"><span class="icon">🧭</span> [[COVERAGE_LABEL]]</a>
-    <a href="#findings"><span class="icon">🔍</span> [[FINDINGS_LABEL]]</a>
-    <a href="#architecture"><span class="icon">🏗</span> [[ARCHITECTURE_LABEL]]</a>
-    <a href="#security"><span class="icon">🔒</span> [[SECURITY_LABEL]]</a>
-    <a href="#stability"><span class="icon">⚡</span> [[STABILITY_LABEL]]</a>
-    <a href="#performance"><span class="icon">🚀</span> [[PERFORMANCE_LABEL]]</a>
-    <a href="#testing"><span class="icon">🧪</span> [[TESTING_LABEL]]</a>
-    <a href="#maintainability"><span class="icon">📐</span> [[MAINTAINABILITY_LABEL]]</a>
-    <a href="#design"><span class="icon">📋</span> [[DESIGN_LABEL]]</a>
-    <a href="#release"><span class="icon">🚢</span> [[RELEASE_LABEL]]</a>
-    <a href="#documentation"><span class="icon">📚</span> [[DOCUMENTATION_LABEL]]</a>
-    <a href="#configuration"><span class="icon">⚙️</span> [[CONFIGURATION_LABEL]]</a>
-    <a href="#observability"><span class="icon">🩺</span> [[OBSERVABILITY_LABEL]]</a>
-    <a href="#data-integrity"><span class="icon">🧱</span> [[DATA_INTEGRITY_LABEL]]</a>
-    <a href="#privacy"><span class="icon">🛡</span> [[PRIVACY_LABEL]]</a>
-    <a href="#accessibility"><span class="icon">⌨️</span> [[ACCESSIBILITY_LABEL]]</a>
-    <a href="#supply-chain"><span class="icon">🔗</span> [[SUPPLY_CHAIN_LABEL]]</a>
-    <a href="#cost"><span class="icon">💸</span> [[COST_LABEL]]</a>
-    <a href="#ai-safety"><span class="icon">🤖</span> [[AI_SAFETY_LABEL]]</a>
-    <a href="#principles"><span class="icon">📋</span> [[PRINCIPLES_LABEL]]</a>
-    <a href="#fix-order"><span class="icon">🎯</span> [[FIX_ORDER_LABEL]]</a>
+    <a href="#executive-summary">[[EXECUTIVE_SUMMARY_LABEL]]</a>
+    <a href="#score-dashboard">[[SCORES_LABEL]]</a>
+    <a href="#project-map">[[PROJECT_MAP_LABEL]]</a>
+    <a href="#coverage">[[COVERAGE_LABEL]]</a>
+    <a href="#statistics">[[STATISTICS_LABEL]]</a>
+    <a href="#top-risks">[[TOP_RISKS_LABEL]]</a>
+    <a href="#findings">[[FINDINGS_LABEL]]</a>
+    <!-- Add a link for each selected dimension and the optional principles section. -->
+    [[DIMENSION_NAV_LINKS]]
+    <a href="#fix-order">[[FIX_ORDER_LABEL]]</a>
+    <a href="#quick-wins">[[QUICK_WINS_LABEL]]</a>
   </div>
-  <div class="sidebar-footer">Fuck My Shit Mountain v1.0</div>
+  <div class="sidebar-footer">[[REVIEWER]]</div>
 </nav>
+<main class="main">
+  <header class="page-header">
+    <h2>[[REPORT_TITLE]]</h2>
+    <div class="meta"><span>[[DATE]]</span><span>[[RESOLVED_SCOPE]]</span></div>
+  </header>
 
-<div class="main">
+  <h3 class="section-title" id="executive-summary">[[EXECUTIVE_SUMMARY_LABEL]]</h3>
+  <div class="card"><div class="card-body">[[SUMMARY_WITH_RISKS_AND_LIMITS]]</div></div>
 
-  <!-- ════════════════════════════════════════ -->
-  <!-- PAGE HEADER                            -->
-  <!-- ════════════════════════════════════════ -->
-  <div class="page-header" id="summary">
-    <!-- CHANGE: title and meta -->
-    <h2>[[PROJECT]] [[TITLE_SUFFIX]]</h2>
-    <div class="meta">
-      <span>📅 [[DATE]]</span>
-      <span>🔍 [[AUDIT_MODE]]</span>
-      <span>🛠 [[REVIEWER]]</span>
+  <h3 class="section-title" id="score-dashboard">[[SCORES_LABEL]]</h3>
+  <div class="card"><div class="card-body"><div class="score-grid">
+    <!-- Repeat per relevant score dimension. For full, include all seven rows.
+         Not assessed rows have an explanation instead of a numeric bar. -->
+    <div class="score-item">
+      <div class="label">[[SCORE_DIMENSION]]</div>
+      <div class="bar-row"><div class="bar-track"><div class="bar-fill [[GRADE_CLASS]]" style="width:[[SCORE_PERCENT]]%"></div></div><span class="value">[[SCORE]]</span><span class="grade">[[GRADE]]</span></div>
+      <div class="small">[[JUSTIFICATION_AND_COVERAGE]]</div>
     </div>
-  </div>
-
-  <!-- ════════════════════════════════════════ -->
-  <!-- SCORE DASHBOARD                        -->
-  <!-- ════════════════════════════════════════ -->
-  <!--
-    CRITICAL: You MUST generate one .score-item per dimension.
-    The dimensions depend on the user's mode selection:
-    - full        → Security, Stability, Performance, Testing, Maintainability, Design, Release
-    - security    → Security
-    - stability   → Stability
-    - performance → Performance
-    - testing     → Testing
-    - architecture → Maintainability, Design
-    - maintainability → Maintainability
-    - design → Design
-    - release     → Release
-    - documentation → Maintainability, Release
-    - observability → Stability, Release
-    - configuration → Security, Stability, Release
-    - data-integrity → Stability, Release
-    - privacy → Security, Stability, Release
-    - accessibility → Testing, Maintainability, Design
-    - supply-chain → Security, Release
-    - cost → Performance, Release
-    - ai-safety → Security, Stability, Testing, Performance
-    - fallback → Stability
-    - testing-authenticity → Testing
-    - type-safety → Security, Design
-    - frontend-state → Maintainability
-    - backend-api → Security, Maintainability
-    - dependency-weight → Performance, Release
-    - code-consistency → Maintainability
-    - comment-coverage → Maintainability
-    If the user chose multiple modes (e.g., "security, stability"), show ONLY those.
-
-    Score → bar width: score * 10% (e.g., 8.5 → width:85%)
-    Grade letter → CSS classes:
-      S → .bar-fill.s .grade-s
-      A → .bar-fill.a .grade-a
-      B → .bar-fill.b .grade-b
-      C → .bar-fill.c .grade-c
-      D → .bar-fill.d .grade-d
-      F → .bar-fill.f .grade-f
-    Overall score = average of selected dimensions, excluding Not assessed dimensions.
-    A zero-finding dimension can receive 10.0 only when coverage is High.
-  -->
-  <div class="card">
-    <div class="card-header">📊 评分面板</div>
-    <div class="card-body">
-      <div class="score-grid">
-
-        <!-- EXAMPLE: keep this structure, replace content for each dimension -->
-        <div class="score-item">
-          <div class="label">Security</div>
-          <div class="bar-row">
-            <div class="bar-track"><div class="bar-fill a" style="width:80%"></div></div>
-            <span class="value grade-a">8.0</span>
-            <span class="grade grade-a">A</span>
-          </div>
-          <div class="small">No auth on WS, hardcoded secret in config</div>
-        </div>
-
-        <div class="score-item">
-          <div class="label">Stability</div>
-          <div class="bar-row">
-            <div class="bar-track"><div class="bar-fill b" style="width:60%"></div></div>
-            <span class="value grade-b">6.0</span>
-            <span class="grade grade-b">B</span>
-          </div>
-          <div class="small">3 unwrap on hot path, no retry on DB</div>
-        </div>
-
-        <div class="score-item">
-          <div class="label">Performance</div>
-          <div class="bar-row">
-            <div class="bar-track"><div class="bar-fill s" style="width:100%"></div></div>
-            <span class="value grade-s">10.0</span>
-            <span class="grade grade-s">S</span>
-          </div>
-          <div class="small">No issues found</div>
-        </div>
-
-        <div class="score-item">
-          <div class="label">Testing</div>
-          <div class="bar-row">
-            <div class="bar-track"><div class="bar-fill c" style="width:40%"></div></div>
-            <span class="value grade-c">4.0</span>
-            <span class="grade grade-c">C</span>
-          </div>
-          <div class="small">9 integration tests real, but unit is weak</div>
-        </div>
-
-        <div class="score-item">
-          <div class="label">Maintainability</div>
-          <div class="bar-row">
-            <div class="bar-track"><div class="bar-fill a" style="width:70%"></div></div>
-            <span class="value grade-a">7.0</span>
-            <span class="grade grade-a">A</span>
-          </div>
-          <div class="small">3 files over 800 lines, SRP violated in 2 modules</div>
-        </div>
-
-        <div class="score-item">
-          <div class="label">Design</div>
-          <div class="bar-row">
-            <div class="bar-track"><div class="bar-fill b" style="width:50%"></div></div>
-            <span class="value grade-b">5.0</span>
-            <span class="grade grade-b">B</span>
-          </div>
-          <div class="small">DRY violated 5x, fail-fast missing at API boundary</div>
-        </div>
-
-        <div class="score-item">
-          <div class="label">Release</div>
-          <div class="bar-row">
-            <div class="bar-track"><div class="bar-fill b" style="width:60%"></div></div>
-            <span class="value grade-b">6.0</span>
-            <span class="grade grade-b">B</span>
-          </div>
-          <div class="small">No CI on Windows, no rollback plan</div>
-        </div>
-
-        <div class="score-item overall-row">
-          <div class="label">Overall</div>
-          <div class="bar-row">
-            <div class="bar-track" style="background:rgba(255,255,255,.12)"><div class="bar-fill" style="width:66%;background:linear-gradient(90deg,#34c759,#30d158)"></div></div>
-            <span class="value" style="color:#fff">6.6</span>
-            <span class="grade" style="color:#34c759">B</span>
-          </div>
-        </div>
-
-      </div>
+    <div class="score-item overall-row">
+      <div class="label">[[OVERALL_LABEL]]</div>
+      <div class="value">[[OVERALL_OR_NOT_ASSESSED]] <span class="grade">[[OVERALL_GRADE_OR_NOT_ASSESSED]]</span></div>
+      <div class="small">[[AGGREGATION_POLICY]]</div>
     </div>
-  </div>
+  </div></div></div>
 
-  <!-- ════════════════════════════════════════ -->
-  <!-- EXECUTIVE SUMMARY                      -->
-  <!-- ════════════════════════════════════════ -->
-  <h3 class="section-title" id="executive-summary">📝 总体评估</h3>
-  <!--
-    Write a 2-4 paragraph executive summary that gives an overall assessment
-    of the project. Cover:
-    - The project's overall health (what it is, what stage, what language/stack)
-    - The biggest risk areas in 1-2 sentences
-    - What the project does well (bright spots)
-    - What the project should prioritize fixing
-    - The overall grade in context (e.g., "B overall — solid but has real issues
-      in testing coverage that could block a stable release")
-  -->
-  <div class="card">
-    <div class="card-header">📋 总体评估</div>
-    <div class="card-body">
-      <p><strong>项目概况：</strong> [[PROJECT_DESC]]</p>
-      <p style="margin-top:12px"><strong>主要风险：</strong> [[TOP_RISKS_SUMMARY]]</p>
-      <p style="margin-top:12px"><strong>亮点：</strong> [[STRENGTHS]]</p>
-      <p style="margin-top:12px"><strong>优先修复：</strong> [[PRIORITIES]]</p>
-      <p style="margin-top:12px"><strong>总评：</strong> [[OVERALL_GRADE_CONTEXT]]</p>
-    </div>
-  </div>
+  <h3 class="section-title" id="project-map">[[PROJECT_MAP_LABEL]]</h3>
+  <div class="card"><div class="card-body">
+    <p>[[STRUCTURE_AND_CRITICAL_FLOWS]]</p>
+    <p>[[COMMANDS_AND_OUTCOMES]]</p>
+    <p>[[EXCLUSIONS_AND_LIMITS]]</p>
+  </div></div>
 
-  <!-- ════════════════════════════════════════ -->
-  <!-- COVERAGE MATRIX                        -->
-  <!-- ════════════════════════════════════════ -->
-  <h3 class="section-title" id="coverage">🧭 [[COVERAGE_TITLE]]</h3>
-  <!--
-    Generate one row per selected dimension. Coverage values:
-    High / Medium / Low / Not assessed.
-    Evidence inspected should name files, commands, searches, or runtime surfaces.
-    Exclusions / limits must be explicit; do not imply complete coverage when it was partial.
-  -->
-  <div class="card">
-    <div class="card-body" style="padding:0">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>[[DIMENSION_COL]]</th><th style="width:120px">[[COVERAGE_COL]]</th><th>[[EVIDENCE_COL]]</th><th>[[LIMITS_COL]]</th></tr></thead>
-          <tbody>
-            <tr><td>Security</td><td><span class="badge badge-confirmed">High</span></td><td>[[COVERAGE_EVIDENCE]]</td><td>[[COVERAGE_LIMITS]]</td></tr>
-            <tr><td>Stability</td><td><span class="badge badge-suspected">Medium</span></td><td>[[COVERAGE_EVIDENCE]]</td><td>[[COVERAGE_LIMITS]]</td></tr>
-            <!-- ... one row per selected dimension ... -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+  <h3 class="section-title" id="coverage">[[COVERAGE_LABEL]]</h3>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>[[DIMENSION_LABEL]]</th><th>[[COVERAGE_LABEL]]</th><th>[[EVIDENCE_LABEL]]</th><th>[[LIMITS_LABEL]]</th></tr></thead>
+    <tbody><!-- Repeat one row per selected dimension, including Not assessed. -->
+      <tr><td>[[DIMENSION_ID]]</td><td>[[COVERAGE]]</td><td>[[EVIDENCE_INSPECTED]]</td><td>[[LIMITS]]</td></tr>
+    </tbody>
+  </table></div></div>
 
-  <!-- ════════════════════════════════════════ -->
-  <!-- STATS                                  -->
-  <!-- ════════════════════════════════════════ -->
-  <!--
-    GENERATE one .stat-card per severity level. Include total findings first.
-    Use inline color style matching severity:
-      critical → var(--badge-critical)
-      high     → var(--badge-high)
-      medium   → var(--badge-medium)
-      low      → var(--badge-low)
-      info     → var(--badge-info)
-  -->
+  <h3 class="section-title" id="statistics">[[STATISTICS_LABEL]]</h3>
   <div class="stats-row">
-    <div class="stat-card"><div class="num">6</div><div class="desc">总发现</div></div>
-    <div class="stat-card"><div class="num" style="color:var(--badge-medium)">2</div><div class="desc">Medium</div></div>
-    <div class="stat-card"><div class="num" style="color:var(--badge-low)">3</div><div class="desc">Low</div></div>
-    <div class="stat-card"><div class="num" style="color:var(--badge-info)">1</div><div class="desc">Info</div></div>
+    <div class="stat-card" data-stat="Total" data-count="[[TOTAL_COUNT]]" data-confirmed="[[TOTAL_CONFIRMED]]" data-suspected="[[TOTAL_SUSPECTED]]"><div class="num">[[TOTAL_COUNT]]</div><div class="desc">[[TOTAL_LABEL]]</div></div>
+    <div class="stat-card" data-stat="Critical" data-count="[[CRITICAL_COUNT]]" data-confirmed="[[CRITICAL_CONFIRMED]]" data-suspected="[[CRITICAL_SUSPECTED]]"><div class="num">[[CRITICAL_COUNT]]</div><div class="desc">[[CRITICAL_LABEL]]</div></div>
+    <div class="stat-card" data-stat="High" data-count="[[HIGH_COUNT]]" data-confirmed="[[HIGH_CONFIRMED]]" data-suspected="[[HIGH_SUSPECTED]]"><div class="num">[[HIGH_COUNT]]</div><div class="desc">[[HIGH_LABEL]]</div></div>
+    <div class="stat-card" data-stat="Medium" data-count="[[MEDIUM_COUNT]]" data-confirmed="[[MEDIUM_CONFIRMED]]" data-suspected="[[MEDIUM_SUSPECTED]]"><div class="num">[[MEDIUM_COUNT]]</div><div class="desc">[[MEDIUM_LABEL]]</div></div>
+    <div class="stat-card" data-stat="Low" data-count="[[LOW_COUNT]]" data-confirmed="[[LOW_CONFIRMED]]" data-suspected="[[LOW_SUSPECTED]]"><div class="num">[[LOW_COUNT]]</div><div class="desc">[[LOW_LABEL]]</div></div>
+    <div class="stat-card" data-stat="Info" data-count="[[INFO_COUNT]]" data-confirmed="[[INFO_CONFIRMED]]" data-suspected="[[INFO_SUSPECTED]]"><div class="num">[[INFO_COUNT]]</div><div class="desc">[[INFO_LABEL]]</div></div>
   </div>
 
-  <!-- ════════════════════════════════════════ -->
-  <!-- TOP RISKS                              -->
-  <!-- ════════════════════════════════════════ -->
-  <h3 class="section-title" id="top-risks">⚠️ [[TOP_RISKS_TITLE]]</h3>
+  <h3 class="section-title" id="top-risks">[[TOP_RISKS_LABEL]]</h3>
+  <div class="card"><div class="card-body">[[RANKED_RISKS_WITH_FINDING_LINKS_OR_NONE]]</div></div>
 
-  <div class="card">
-    <div class="card-body" style="padding:0">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th style="width:60px">#</th><th>[[FINDING_COL]]</th><th style="width:100px">[[SEVERITY_COL]]</th><th style="width:80px">[[CATEGORY_COL]]</th></tr></thead>
-          <tbody>
-            <!-- CHANGE: one row per finding, sorted by severity descending -->
-            <tr><td>1</td><td>[[FINDING_TITLE_1]]</td><td><span class="badge badge-medium">[[SEVERITY_1]]</span></td><td>[[CATEGORY_1]]</td></tr>
-            <tr><td>2</td><td>[[FINDING_TITLE_2]]</td><td><span class="badge badge-medium">[[SEVERITY_2]]</span></td><td>[[CATEGORY_2]]</td></tr>
-            <tr><td>3</td><td>[[FINDING_TITLE_3]]</td><td><span class="badge badge-low">[[SEVERITY_3]]</span></td><td>[[CATEGORY_3]]</td></tr>
-            <!-- ... more rows ... -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════ -->
-  <!-- DETAILED FINDINGS                      -->
-  <!-- ════════════════════════════════════════ -->
-  <h3 class="section-title" id="findings">🔍 [[DETAILED_FINDINGS_TITLE]]</h3>
-
-  <!-- REPLACE: generate one .finding per finding. Use .severity-* class matching severity level. -->
-  <div class="finding severity-medium">
+  <h3 class="section-title" id="findings">[[FINDINGS_LABEL]]</h3>
+  <!-- Repeat only for actual findings. With zero findings, replace the whole block with an explanation. -->
+  <article class="finding severity-[[SEVERITY_CLASS]]" data-finding="[[FINDING_ID]]" id="finding-[[FINDING_ID]]">
     <div class="finding-header">
-      <h4>[[FINDING_NUM]]. [[FINDING_TITLE]]</h4>
-      <span class="badge badge-medium">[[SEVERITY]]</span>
-      <span class="badge badge-confirmed">[[CONFIRMED_LABEL]]</span>
+      <h4>[[FINDING_TITLE]]</h4>
+      <span class="badge badge-[[SEVERITY_CLASS]]" data-field="severity">[[SEVERITY]]</span>
+      <span class="badge" data-field="status">[[STATUS]]</span>
     </div>
     <div class="finding-meta">
-      <span>📁 [[CATEGORY]]</span>
-      <span>📍 [[FILE_LOCATION]]</span>
-      <span>🎯 [[FUNCTION_MODULE]]</span>
+      <span>[[CATEGORY_LABEL]]: <span data-field="category">[[CATEGORY]]</span></span>
+      <span>[[CONFIDENCE_LABEL]]: <span data-field="confidence">[[CONFIDENCE]]</span></span>
+      <span>[[AFFECTED_AREA_LABEL]]: <span data-field="affectedArea">[[AFFECTED_AREA]]</span></span>
     </div>
-    <div class="problem">
-      <strong>[[PROBLEM_LABEL]]：</strong>[[PROBLEM_DESC]]
-    </div>
-    <div class="evidence">
-      [[EVIDENCE_CODE]]
-    </div>
-    <div class="fix-box">
-      <div class="fix-label">[[MIN_FIX_LABEL]]</div>
-      <code>[[MIN_FIX_CODE]]</code>
-    </div>
-    <div class="fix-box" style="margin-top:6px;background:#fff8e1;border-color:#ffe082">
-      <strong>⏱ [[EFFORT_LABEL]]：</strong> [[EFFORT]] &nbsp;·&nbsp; <strong>[[REGRESSION_LABEL]]：</strong> [[REGRESSION_DESC]]
-    </div>
-  </div>
+    <div class="problem"><strong>[[PROBLEM_LABEL]]</strong><p data-field="problem">[[PROBLEM]]</p></div>
+    <div class="evidence" data-field="evidence">[[ESCAPED_FILE_LOCATION_FUNCTION_AND_BEHAVIOR]]</div>
+    <p>[[IMPACT_LABEL]]: <span data-field="userVisibleImpact">[[IMPACT]]</span></p>
+    <p>[[SCENARIO_LABEL]]: <span data-field="failureScenario">[[FAILURE_SCENARIO]]</span></p>
+    <div class="fix-box"><div class="fix-label">[[MINIMAL_FIX_LABEL]]</div><div data-field="minimalFix">[[MINIMAL_FIX]]</div></div>
+    <p>[[VERIFICATION_LABEL]]: <span data-field="regressionTestSuggestion">[[REGRESSION_VERIFICATION]]</span></p>
+    <p>[[EFFORT_LABEL]]: <span data-field="estimatedEffort">[[ESTIMATED_EFFORT]]</span></p>
+    <!-- Optional long-term fix and specialized evidence belong after the common fields. -->
+  </article>
 
-  <!-- ... repeat per finding ... -->
-
-  <!-- ════════════════════════════════════════ -->
-  <!-- PER-DIMENSION SECTIONS                  -->
-  <!-- ════════════════════════════════════════ -->
-  <!--
-    CRITICAL: Generate one <h3> section per dimension that the user selected.
-    Do NOT generate sections for dimensions the user didn't ask about.
-    
-    FULL mode covers ALL 25 audit dimensions:
-      1.  Architecture & Module Boundaries
-      2.  Security
-      3.  Stability & Error Handling
-      4.  Performance & Scalability
-      5.  Testing Quality
-      6.  Maintainability
-      7.  Design Principles Compliance
-      8.  Release & Deployment Process
-      9.  Documentation Accuracy
-      10. Configuration Safety
-      11. Observability
-      12. Data Integrity
-      13. Privacy / Data Governance
-      14. Accessibility / UX Correctness
-      15. Supply Chain / Reproducibility
-      16. Cost / Resource Economics
-      17. AI / LLM Safety
-      18. Fallback / Defensive Code
-      19. Testing Authenticity
-      20. Type Safety
-      21. Frontend State
-      22. Backend API
-      23. Dependency Weight
-      24. Code Consistency
-      25. Comment Coverage
-
-    Each section has the SAME pattern:
-      <h3 class="section-title" id="[dimension-id]">[ICON] [TITLE]</h3>
-
-      <!-- coverage note (always include) -->
-      <div class="card">
-        <div class="card-header">🧭 [COVERAGE HEADER]</div>
-        <div class="card-body">
-          <p><strong>Coverage:</strong> High / Medium / Low / Not assessed</p>
-          <p><strong>Inspected evidence:</strong> [files, commands, patterns, runtime surfaces]</p>
-          <p><strong>Exclusions / limits:</strong> [what was not inspected and why]</p>
-        </div>
-      </div>
-
-      <!-- findings table (if any) -->
-      <div class="card">
-        <div class="card-header">已确认 <span style="font-weight:400;font-size:13px;color:var(--text-secondary)">· N 个发现</span></div>
-        <div class="card-body" style="padding:0">
-          <div class="table-wrap"><table>
-            <thead><tr><th>发现</th><th style="width:100px">严重程度</th><th style="width:100px">状态</th></tr></thead>
-            <tbody>
-              <tr><td>[title]</td><td><span class="badge badge-medium">Medium</span></td><td><span class="badge badge-confirmed">Confirmed</span></td></tr>
-            </tbody>
-          </table></div>
-        </div>
-      </div>
-
-      <!-- verified good practices (always include, even if no findings) -->
-      <div class="card">
-        <div class="card-header">✅ [VERIFIED HEADER]</div>
-        <div class="card-body">
-          <div class="check-list">
-            <div class="check-item"><span class="check">✓</span> [practice]</div>
-          </div>
-        </div>
-      </div>
-
-    If a dimension has zero findings, just show the verified card.
-    If a dimension is not applicable (e.g., Frontend-State for a pure backend project),
-    skip it entirely.
-  -->
-
-  <!-- ──── EXAMPLE SECTIONS ──── -->
-  <!--
-    BELOW ARE EXAMPLE SECTIONS showing the pattern for different cases.
-    REPLACE all content with your actual audit data.
-    GENERATE one section per audited dimension (up to 25 in full mode).
-  -->
-
-  <!-- EXAMPLE 1: Security — has findings -->
-  <h3 class="section-title" id="security">🔒 Security</h3>
-
+  <!-- Repeat this dimension block per selected mode. Replace the ID with its canonical mode token. -->
+  <h3 class="section-title" id="[[DIMENSION_ID]]">[[DIMENSION_LABEL]]</h3>
   <div class="card">
-    <div class="card-header">已确认 <span style="font-weight:400;font-size:13px;color:var(--text-secondary)">· 2 个发现</span></div>
-    <div class="card-body" style="padding:0">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>发现</th><th style="width:100px">严重程度</th><th style="width:100px">状态</th></tr></thead>
-          <tbody>
-            <tr><td>TOTP 时钟偏差窗口已文档化但未实现</td><td><span class="badge badge-medium">Medium</span></td><td><span class="badge badge-confirmed">Confirmed</span></td></tr>
-            <tr><td>SMTP AUTH PLAIN 密码通过 format! 构建</td><td><span class="badge badge-low">Low</span></td><td><span class="badge badge-confirmed">Confirmed</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">✅ 已验证安全</div>
+    <div class="card-header">[[COVERAGE_AND_LIMITS]]</div>
     <div class="card-body">
-      <div class="check-list">
-        <div class="check-item"><span class="check">✓</span> Argon2id token 哈希（OWASP 2023 参数）</div>
-        <div class="check-item"><span class="check">✓</span> 常量时间比较（subtle::ConstantTimeEq）</div>
-        <div class="check-item"><span class="check">✓</span> CSPRNG token 生成（getrandom）</div>
-      </div>
+      <p>[[DIMENSION_ANALYSIS_OR_NOT_ASSESSED_REASON]]</p>
+      [[FINDINGS_TABLE_WITH_IDS_OR_NO_FINDINGS_EXPLANATION]]
+      <div class="check-list">[[VERIFIED_CHECKS_WITH_EVIDENCE_OR_NONE]]</div>
     </div>
   </div>
 
-  <!-- EXAMPLE 2: Stability — has findings -->
-  <h3 class="section-title" id="stability">⚡ Stability</h3>
+  <!-- Optional principles section: reference root finding IDs and explain concrete risks. -->
+  [[PRINCIPLES_SECTION_IF_APPLICABLE]]
 
-  <div class="card">
-    <div class="card-header">已确认 <span style="font-weight:400;font-size:13px;color:var(--text-secondary)">· 1 个发现</span></div>
-    <div class="card-body" style="padding:0">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>发现</th><th style="width:100px">严重程度</th><th style="width:100px">状态</th></tr></thead>
-          <tbody>
-            <tr><td>生产代码 .unwrap() 在 web_assets.rs</td><td><span class="badge badge-medium">Medium</span></td><td><span class="badge badge-confirmed">Confirmed</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+  <h3 class="section-title" id="fix-order">[[FIX_ORDER_LABEL]]</h3>
+  <div class="card"><div class="card-body">[[PRIORITIZED_FIXES_WITH_FINDING_LINKS_OR_NONE]]</div></div>
 
-  <div class="card">
-    <div class="card-header">✅ 已验证稳健</div>
-    <div class="card-body">
-      <div class="check-list">
-        <div class="check-item"><span class="check">✓</span> 优雅关闭（CancellationToken + drain + 5s 超时）</div>
-        <div class="check-item"><span class="check">✓</span> Mutex 中毒处理（prune + clear_poison）</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- EXAMPLE 3: Performance — zero findings, only verified card -->
-  <h3 class="section-title" id="performance">🚀 Performance</h3>
-
-  <div class="card">
-    <div class="card-header">✅ 无发现</div>
-    <div class="card-body">
-      <div class="check-list">
-        <div class="check-item"><span class="check">✓</span> 三层视图缓存（overview/nodes/metrics）</div>
-        <div class="check-item"><span class="check">✓</span> 有界队列（history writer + audit writer）</div>
-      </div>
-    </div>
-  </div>
-
-  <!--
-    REPEAT the above pattern for EVERY audited dimension.
-    In full mode: Architecture, Security, Stability, Performance, Testing,
-    Maintainability, Design, Release, Documentation, Configuration,
-    Observability, Data-Integrity, Privacy, Accessibility, Supply-Chain,
-    Cost, AI-Safety, Fallback, Testing-Authenticity, Type-Safety,
-    Frontend-State, Backend-API, Dependency-Weight, Code-Consistency,
-    Comment-Coverage.
-
-    Each gets its own <h3> + findings card (or "✅ 无发现") + verified card.
-    Use the icon + Chinese title consistent with the dimension's topic.
-    Do NOT skip any. Do NOT merge dimensions together.
-  -->
-
-  <!-- ════════════════════════════════════════ -->
-  <!-- DESIGN PRINCIPLES                      -->
-  <!-- ════════════════════════════════════════ -->
-  <h3 class="section-title" id="principles">📋 [[PRINCIPLES_TITLE]]</h3>
-
-  <!-- violations table -->
-  <div class="card">
-    <div class="card-header">[[VIOLATIONS_HEADER]]</div>
-    <div class="card-body" style="padding:0">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>[[PRINCIPLE_COL]]</th><th>[[COUNT_COL]]</th><th style="width:100px">[[SEVERITY_COL]]</th><th>[[AREA_COL]]</th></tr></thead>
-          <tbody>
-            <tr><td>[[PRINCIPLE_NAME]]</td><td>[[VIOLATION_COUNT]]</td><td><span class="badge badge-low">[[SEVERITY]]</span></td><td>[[AREA]]</td></tr>
-            <!-- ... -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- followed principles -->
-  <div class="card">
-    <div class="card-header">✅ [[FOLLOWED_HEADER]]</div>
-    <div class="card-body">
-      <div class="check-list">
-        <div class="check-item"><span class="check">✓</span> [[PRINCIPLE_NAME]] — [[DESC]]</div>
-        <!-- ... -->
-      </div>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════ -->
-  <!-- FIX ORDER                             -->
-  <!-- ════════════════════════════════════════ -->
-  <h3 class="section-title" id="fix-order">🎯 [[FIX_ORDER_TITLE]]</h3>
-
-  <!-- Each priority group gets its own card with a table -->
-  <div class="card">
-    <div class="card-header">
-      <span>⚡ [[IMMEDIATE_LABEL]]</span>
-      <span class="badge badge-medium">[[URGENCY]]</span>
-    </div>
-    <div class="card-body" style="padding:0">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>#</th><th>[[FIX_COL]]</th><th>[[EFFORT_COL]]</th><th>[[RISK_COL]]</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>[[FIX_DESC]]</td><td>[[EFFORT]]</td><td>[[RISK_DESC]]</td></tr>
-            <!-- ... -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <span>📅 [[SCHEDULE_LABEL]]</span>
-      <span class="badge badge-low">[[URGENCY]]</span>
-    </div>
-    <div class="card-body" style="padding:0">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>#</th><th>[[FIX_COL]]</th><th>[[EFFORT_COL]]</th></tr></thead>
-          <tbody>
-            <tr><td>[[NUM]]</td><td>[[FIX_DESC]]</td><td>[[EFFORT]]</td></tr>
-            <!-- ... -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════ -->
-  <!-- QUICK WINS                             -->
-  <!-- ════════════════════════════════════════ -->
-  <h3 class="section-title">⚡ [[QUICK_WINS_TITLE]]</h3>
-
-  <div class="win-grid">
-    <div class="win-card">
-      <div class="win-title">[[WIN_TITLE]]</div>
-      <div class="win-meta">[[WIN_META]]</div>
-    </div>
-    <div class="win-card">
-      <div class="win-title">[[WIN_TITLE]]</div>
-      <div class="win-meta">[[WIN_META]]</div>
-    </div>
-    <div class="win-card">
-      <div class="win-title">[[WIN_TITLE]]</div>
-      <div class="win-meta">[[WIN_META]]</div>
-    </div>
-    <!-- ... -->
-  </div>
-
-  <div style="text-align:center;padding:40px 0 20px;color:var(--text-secondary);font-size:12px">
-    [[FOOTER_TEXT]]
-  </div>
-
-</div>
-
+  <h3 class="section-title" id="quick-wins">[[QUICK_WINS_LABEL]]</h3>
+  <div class="win-grid">[[QUICK_WIN_CARDS_WITH_FINDING_LINKS_OR_NONE]]</div>
+  <footer class="small">[[VALIDATION_AND_COVERAGE_LIMITS]]</footer>
+</main>
 <script>
-  const sections = document.querySelectorAll('[id]');
-  const navLinks = document.querySelectorAll('.sidebar-nav a');
-
-  const observer = new IntersectionObserver((entries) => {
-    let activeId = null;
-    entries.forEach(entry => {
-      if (entry.isIntersecting) activeId = entry.target.id;
-    });
-    if (activeId) {
-      navLinks.forEach(a => {
-        a.classList.toggle('active', a.getAttribute('href') === '#' + activeId);
-      });
-    }
-  }, { rootMargin: '-10% 0px -60% 0px' });
-
-  sections.forEach(s => observer.observe(s));
-
-  navLinks.forEach(a => {
-    a.addEventListener('click', function(e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
+  const navLinks = Array.from(document.querySelectorAll('.sidebar-nav a'));
+  const sections = navLinks.map(a => document.getElementById(a.hash.slice(1))).filter(Boolean);
+  const observer = new IntersectionObserver(entries => {
+    const active = entries.find(entry => entry.isIntersecting);
+    if (active) navLinks.forEach(a => a.classList.toggle('active', a.hash === '#' + active.target.id));
+  }, {rootMargin: '-10% 0px -60% 0px'});
+  sections.forEach(section => observer.observe(section));
+  navLinks.forEach(a => a.addEventListener('click', event => {
+    const target = document.getElementById(a.hash.slice(1));
+    if (target) { event.preventDefault(); target.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+  }));
 </script>
-
 </body>
 </html>

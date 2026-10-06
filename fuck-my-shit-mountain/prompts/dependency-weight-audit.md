@@ -52,23 +52,13 @@ Focus on whether dependencies are pulling their weight — not just known vulner
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Release / Performance / Maintainability
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: Overweight / Unused / DeadDependency / TransitiveRisk / ToolchainComplexity / VersionRisk
-- Affected area:
 - Dependency:
-- Evidence:
-  - File (where it is used):
-  - Usage pattern (how much of its API is used):
-  - Bundle / binary size contribution (if measurable):
-- Problem:
 - Why it is a risk:
 - What it provides vs what the project actually needs:
 - Recommended action: Keep / Inline / ReplaceWithLighter / Remove / AuditTransitives
-- Minimal fix:
 - Build / test verification after removal:
-- Estimated effort:

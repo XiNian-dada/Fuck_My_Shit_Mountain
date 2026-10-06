@@ -71,28 +71,13 @@ Focus on whether this project can be safely released, installed, upgraded, and r
 1. Focus on practical release risks, not hypothetical edge cases.
 2. For each issue, include the user impact and a specific validation step.
 
-## Attitude
-
-1. **Be exhaustively systematic.** Check in-scope CI steps, release scripts, environment requirements, config files, packaging, rollback, and deployment evidence. Follow the skill's coverage strategy and document exclusions honestly.
-2. **Do not be a yes-man.** Report release risks even if the user says "we've never had a problem." Past success does not guarantee future safety.
-
-
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Release
-- Status: Confirmed / Suspected
-- Affected area:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
+Include these additional details when they help substantiate a finding:
+
 - Release risk:
 - User impact:
-- Minimal fix:
 - Better release process:
 - Validation step:
-- Estimated effort:

@@ -49,20 +49,9 @@ Focus on practical violations of engineering principles from `rubrics/principles
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Design / Maintainability / Stability
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Principle: <principle name and ID from rubrics/principles.md>
-- Affected area:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
-- Problem:
 - Why this creates risk:
-- Minimal fix:
-- Regression test suggestion:
-- Estimated effort:

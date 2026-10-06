@@ -64,22 +64,10 @@ Focus on frontend state management, component architecture, and UI data flow. Th
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Maintainability / Performance
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: ComponentSize / StateDuplication / PropDrilling / EffectChain / UIBusinessCoupling / DOMasState / RequestState / RenderPerf
-- Affected area:
-- Evidence:
-  - File:
-  - Component / Store:
-  - Relevant behavior:
-- Problem:
 - Why it creates maintenance risk:
 - Recommended action: Split / Lift / Compute / Centralize / Debounce / Virtualize
-- Minimal fix:
-- Better long-term fix:
-- Regression test suggestion:
-- Estimated effort:

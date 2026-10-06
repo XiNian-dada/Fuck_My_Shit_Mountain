@@ -98,6 +98,8 @@ You don't need to memorize internal mode identifiers. Just describe your intent 
 | **Suspiciously Green Tests** | `Verify whether tests provide genuine confidence` | `testing`, `testing-authenticity` |
 | **Refactoring Preparation** | `Identify complexity, bad smells, and technical debt` | `maintainability`, `architecture`, `design`, `code-consistency` |
 
+Reports default to the conversation language and conversational output. File output and history are opt-in. PR reviews compare `main...HEAD`; explicit snapshot comparisons use ranges such as `v1.2.0..HEAD`.
+
 **Example Invocation:**
 
 ```text
@@ -113,11 +115,11 @@ Output format: html
 ### Score Dashboard Example
 
 ```text
-Security        ████████░░  8.0  A   Missing auth guard on sensitive route; default dev secret
+Security        ████████░░  8.0  A   Owner checks verified; one contained session-expiry gap
 Stability       ██████░░░░  6.0  B   2 unhandled panic paths in payment flow; missing circuit breaker
 Performance     ██████████ 10.0  S   No observable I/O bottlenecks or unbounded memory growth
 Testing         ████░░░░░░  4.0  C   Heavy reliance on shallow mocks; critical edge cases unasserted
-Maintainability ███████░░░  7.0  A   2 god classes over 1,000 LOC violating SRP
+Maintainability ███████░░░  7.0  A   Shared parsing logic creates recurring change cost
 Design          █████░░░░░  5.0  B   Circular dependency between billing and user modules
 Release         ██████░░░░  6.0  B   No automated rollback strategy; CI lacks cross-platform checks
 ────────────────────────────────────────────────────────────────────────────────────────────────────

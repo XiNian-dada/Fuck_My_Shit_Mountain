@@ -1,116 +1,46 @@
-# Incremental Audit Prompt
+# Incremental Audit
 
-Use the fuck-my-shit-mountain skill in **incremental mode**.
+Review risks introduced or worsened by a change, including removed safeguards and broken callers. Load `references/report-format.md` for the common report contract. Incremental is a scope mode: alone it covers every focused dimension, or combine it with focused modes such as `incremental,security,concurrency`.
 
-Shared setup, coverage, report template, HTML, and lint rules live in `references/report-format.md`; load that reference before producing the report.
+## Resolve Git Scope
 
-Focus on auditing only the files that changed since a specified git reference (commit, branch, or tag). This mode is designed for PR reviews, pre-merge checks, and continuous auditing workflows.
+Inspect Git status first. Validate requested refs and record the resolved commits, comparison type, merge base when applicable, and whether staged/unstaged/untracked changes are included. Never silently substitute another ref when the requested ref is missing. If this is not a Git repository, explain that an incremental comparison needs a supplied diff or a Git checkout.
 
-## Audit Scope
+Choose the comparison from the request:
 
-The scope parameter MUST contain a git reference for incremental mode, such as:
-- `main..HEAD` — changes on current branch since it diverged from main
-- `v1.2.0..HEAD` — all changes since release tag v1.2.0
-- `abc123..HEAD` — changes since specific commit abc123
-- `origin/main..HEAD` — changes not yet pushed to remote main
+- **PR / changes since divergence:** use `<base>...<head>`, defaulting head to `HEAD`. Example: `main...HEAD` compares the merge base with HEAD and excludes independent changes made on main. Determine the base from the request, PR metadata, or configured remote default branch. Ask if none is known; do not guess, switch branches, or fetch implicitly.
+- **Explicit endpoint comparison:** preserve `<old>..<new>`. Example: `v1.2.0..HEAD` compares the release snapshot with HEAD. Two dots do not mean changes since branch divergence.
+- **Single commit reference:** for committed changes since that snapshot, use `<commit>..HEAD`. If the request refers to a branch/PR, use the divergence comparison instead. Ask only if the distinction materially affects an ambiguous request.
+- **Current worktree:** when requested, compare tracked content to the stated base (or HEAD) and inspect untracked files separately. `git diff HEAD --` includes staged and unstaged tracked changes; `git ls-files --others --exclude-standard -z` inventories untracked files. For a staged-only request, use `git diff --cached --`. Do not include unrelated existing edits in a committed PR review.
 
-Use `git diff --name-only <ref>` to get the list of changed files, then audit only those files.
+For committed comparisons, use the resolved range consistently:
 
-## Audit Areas
+```bash
+git diff --name-status -z --find-renames <resolved-range> --
+git diff --find-renames <resolved-range> --
+git diff --numstat <resolved-range> --
+```
 
-Incremental audits apply ALL dimensions (security, stability, performance, testing, maintainability, design, release, etc.) to the changed files, but with a focus on:
+Read the actual diff, not just filenames. Handle NUL-separated names without splitting paths at spaces or newlines. Renames retain their identity; inspect references and behavior rather than assuming every rename is a deletion plus an unrelated addition. Read deleted code from the relevant base snapshot. Empty diffs produce an explicit zero-change report, not a full audit.
 
-1. **New risks introduced** — vulnerabilities, crash paths, race conditions, data integrity issues
-2. **Deleted safety mechanisms** — removed validation, error handling, tests, or security checks
-3. **Behavioral changes** — modified logic that could break existing assumptions or contracts
-4. **Dependency changes** — new dependencies, version upgrades, or removals
-5. **Test coverage for changes** — whether new/modified code has corresponding tests
-6. **Configuration changes** — new config keys, changed defaults, environment variables
-7. **Migration or schema changes** — database migrations, API contract changes
-8. **Documentation updates** — whether docs reflect the changes
+## Trace Change Impact
 
-## Context Awareness
+- Check new vulnerabilities, failure paths, races, persistence and privacy risks.
+- Inspect deleted validation, error handling, synchronization, and tests.
+- Follow unchanged callers and dependencies as needed to understand the affected contract.
+- Check dependency/configuration changes, schema migrations, and public API compatibility.
+- Evaluate whether existing tests cover the changed behavior. Missing new test files alone is not a finding.
+- Report pre-existing issues only when the change makes them worse; explain the causal link to the diff.
+- Set severity by demonstrated impact and reachable conditions, not merely by number of callers or lines changed.
 
-When auditing changed files, consider:
-- **Unchanged callers** — if a function signature or behavior changes, check if callers are still correct
-- **Cross-file impacts** — if a shared module changes, consider downstream effects
-- **Deleted code** — what depended on it, and is the deletion safe?
-- **Renamed/moved files** — treat as a delete + add, check all references
+Keep the findings proportional to demonstrated risks. A small change may have a large impact, but it does not justify unrelated repository-wide findings.
 
-Use `git diff <ref>` to see the actual line-level changes, not just file names.
+## Finding Evidence
 
-## Rules
+Use `templates/issue-card.md`. Add the changed file/function, relevant base and head behavior, diff location, change type (Added / Modified / Deleted / Renamed), and related unchanged callers. Show what changed and why the change introduces or worsens the risk.
 
-1. **Focus on the diff.** Do not audit the entire codebase unless a change touches a critical shared component.
-2. **Report only new risks.** Do not report pre-existing issues unless they are made worse by the changes.
-3. **Check test coverage.** If new code lacks tests, that's a finding.
-4. **Consider blast radius.** If a small change affects a widely-used module, escalate severity.
-5. **Flag breaking changes.** API contract changes, schema migrations, and config key renames should be explicitly noted.
-6. **Be proportional.** A 5-line bug fix doesn't need a 50-finding audit. Scale findings to the change size.
+## Report Additions
 
-## Attitude
+Include a change summary with the resolved scope, changed file count, added/deleted lines, and any worktree exclusions. Derive numbers from the actual Git output; do not guess feature/bug-fix categories from filenames. Describe test coverage gaps and risk changes only when they were inspected.
 
-1. **Be exhaustively systematic.** Check every changed file, every modified function, every deleted safety check. Follow the skill's coverage strategy and document exclusions honestly.
-2. **Do not be a yes-man.** Do not approve changes just because they are small or seem safe. If a one-line change introduces a race condition, say so.
-3. **Context matters.** A change that would be fine in a new project may be risky in a mature codebase. Consider the project's maturity and stability requirements.
-
-## Finding Format
-
-### Finding: <short title>
-
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: <dimension>
-- Status: Confirmed / Suspected
-- Affected area:
-- Evidence:
-  - Changed files:
-  - Changed functions:
-  - Diff context: (git diff snippet if relevant)
-  - Related unchanged code: (callers, dependencies)
-- Change type: Added / Modified / Deleted / Renamed
-- Risk introduced:
-- Failure scenario:
-- User-visible impact:
-- Minimal fix:
-- Better long-term fix:
-- Regression test suggestion:
-- Estimated effort:
-
-## Report Additions for Incremental Mode
-
-In addition to standard report sections, include:
-
-### Change Summary
-- Total files changed: <N>
-- Lines added: <N>
-- Lines deleted: <N>
-- Commits in range: <N>
-- Authors: <list>
-
-### Change Categories
-- New features: <N files>
-- Bug fixes: <N files>
-- Refactoring: <N files>
-- Dependency updates: <N files>
-- Configuration: <N files>
-- Tests: <N files>
-- Documentation: <N files>
-
-### Risk Delta
-- New risks introduced: <N>
-- Existing risks fixed: <N>
-- Existing risks made worse: <N>
-
-### Test Coverage Delta
-- New code with tests: <N files>
-- New code without tests: <N files>
-- Deleted tests: <N files>
-
-### Approval Recommendation
-
-Based on findings:
-- **Approve** — no critical or high-severity issues, changes are safe
-- **Approve with comments** — minor issues that can be addressed post-merge
-- **Request changes** — issues that must be fixed before merge
-- **Block** — critical issues that make the changes unsafe
+If the user requests a merge recommendation, tie it to findings and coverage: request changes for demonstrated blocking risks, approve with comments for non-blocking issues, or state insufficient evidence when important checks are missing. An empty finding list alone does not establish that merging is safe. The recommendation is advisory; do not merge or post comments unless separately authorized.

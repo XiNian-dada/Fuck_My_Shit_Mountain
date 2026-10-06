@@ -60,20 +60,8 @@ Focus on configuration correctness, validation, environment separation, feature 
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Security / Stability / Release / Maintainability
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: SchemaValidation / UnsafeDefault / EnvironmentSeparation / SecretConfig / FeatureFlag / ConfigDocs
-- Affected area:
-- Evidence:
-  - File:
-  - Config key / source:
-  - Relevant behavior:
-- Problem:
-- Realistic failure scenario:
-- Minimal fix:
-- Regression test suggestion:
-- Estimated effort:

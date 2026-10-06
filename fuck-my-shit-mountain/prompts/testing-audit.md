@@ -44,11 +44,6 @@ Focus on whether the tests provide real confidence in the codebase.
 - Test environment consistency
 - Test reporting (what breaks, where, why)
 
-## Attitude
-
-1. **Be exhaustively systematic.** Check in-scope critical paths, error paths, edge cases, and test layers. Follow the skill's coverage strategy and document exclusions honestly.
-2. **Do not be a yes-man.** Report testing gaps even if the user says "we have good coverage." Coverage percentage does not equal confidence.
-
 ## Grouping
 
 Group recommendations into:
@@ -61,21 +56,12 @@ Group recommendations into:
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Testing
-- Status: Confirmed / Suspected
-- Affected area:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
+Include these additional details when they help substantiate a finding:
+
 - Behavior to test:
-- Why it matters:
 - Suggested test type: Unit / Integration / E2E / Property / Fuzz
 - Minimal test case:
 - Failure it would catch:
-- Estimated effort:
 - Priority: Must add / Should add / Nice to have / Not worth testing

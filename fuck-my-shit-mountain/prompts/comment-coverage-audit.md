@@ -54,20 +54,10 @@ Focus on documentation quality, comment coverage of public APIs, stale/misleadin
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Maintainability
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: MissingDoc / StaleComment / NoiseComment / MissingModuleDoc / PoorInlineComment / NotSelfDocumenting
-- Evidence:
-  - File(s):
-  - Function / Module:
-  - Current comment (or absence):
 - Why this matters:
 - Impact on maintainability or onboarding:
-- Minimal fix:
-- Better long-term fix:
-- Regression test suggestion:
-- Estimated effort:

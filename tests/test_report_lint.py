@@ -1,5 +1,6 @@
 """Regression cases for observable report validation behavior."""
 import contextlib
+import html
 import io
 import json
 import sys
@@ -213,6 +214,42 @@ class ReportLintTests(unittest.TestCase):
 
     def test_schema_changes_cannot_silently_skip_constraints(self):
         self.assertTrue(validate_schema('abc', {'type':'string', 'pattern':'^x'}))
+
+    def test_real_templates_produce_consistent_reports(self):
+        import re
+        skill = ROOT / 'fuck-my-shit-mountain'
+        for has_finding in (False, True):
+            item = finding()
+            counts = stats([item] if has_finding else [])
+            values = dict(PROJECT='示例项目', LANGUAGE_TAG='zh-CN', DIMENSION_ID='security',
+                          FINDING_ID='F1', TITLE=item['title'], FINDING_TITLE=item['title'],
+                          SEVERITY='High', SEVERITY_CLASS='high', STATUS='Confirmed',
+                          CONFIDENCE='High', CATEGORY='security', AFFECTED_AREA=item['affectedArea'],
+                          FILE_AND_LOCATION=item['evidence']['file'], FUNCTION_OR_MODULE='get_account',
+                          RELEVANT_BEHAVIOR=item['evidence']['relevantBehavior'], PROBLEM=item['problem'],
+                          IMPACT=item['userVisibleImpact'], FAILURE_SCENARIO=item['failureScenario'],
+                          MINIMAL_FIX=item['minimalFix'], REGRESSION_VERIFICATION=item['regressionTestSuggestion'],
+                          ESTIMATED_EFFORT=item['estimatedEffort'], SCORE_PERCENT='70', GRADE_CLASS='a',
+                          DIMENSION_NAV_LINKS='<a href="#security">安全分析</a>',
+                          ESCAPED_FILE_LOCATION_FUNCTION_AND_BEHAVIOR=html.escape(item['evidence']['file'] + ' ' + item['evidence']['relevantBehavior']))
+            for row in [*counts, {'severity':'Total', 'count':int(has_finding), 'confirmed':int(has_finding), 'suspected':0}]:
+                for column in ('count', 'confirmed', 'suspected'):
+                    values[row['severity'].upper() + '_' + column.upper()] = str(row[column])
+            def fill(text):
+                return re.sub(r'\[\[([^\]]+)\]\]', lambda m: values.get(m.group(1), '检查说明'), text)
+            card = fill((skill / 'templates/issue-card.md').read_text()) if has_finding else '检查范围内未发现达到报告阈值的问题。'
+            values['FINDING_CARDS_OR_NO_FINDINGS_EXPLANATION'] = card
+            md = fill((skill / 'templates/audit-report.md').read_text())
+            page = (skill / 'templates/audit-report.html').read_text()
+            if not has_finding:
+                page = re.sub(r'<article\b.*?</article>', '<p>检查范围内未发现问题。</p>', page, flags=re.S)
+            self.assertEqual(self.check(md, '.md'), [])
+            self.assertEqual(self.check(fill(page), '.html'), [])
+
+    def test_schema_mode_enum_matches_available_prompts(self):
+        schema = json.loads((ROOT / 'fuck-my-shit-mountain/templates/audit-report.json').read_text())
+        modes = schema['properties']['metadata']['properties']['auditModes']['items']['enum']
+        self.assertEqual(set(modes), {'full', 'incremental', *lint.FULL_SECTION_IDS})
 
 
 if __name__ == '__main__':

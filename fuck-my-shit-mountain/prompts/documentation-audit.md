@@ -49,20 +49,8 @@ Focus on whether external docs, internal docs, setup instructions, and operation
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Maintainability / Release / Testing
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: UserDocs / OperatorDocs / DeveloperDocs / ApiDocs / DecisionRecord / StaleDocs
-- Affected area:
-- Evidence:
-  - Documentation file:
-  - Code / config source:
-  - Relevant mismatch or omission:
-- Problem:
-- Realistic failure scenario:
-- Minimal fix:
-- Regression test suggestion:
-- Estimated effort:

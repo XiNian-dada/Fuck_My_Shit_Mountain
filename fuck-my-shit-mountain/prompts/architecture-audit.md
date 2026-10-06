@@ -54,20 +54,9 @@ Focus on module boundaries, dependency direction, layering, ownership, and wheth
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Maintainability / Design / Stability
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: ModuleBoundary / DependencyDirection / StateOwnership / BoundaryContract / EvolutionRisk
-- Affected area:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
-- Problem:
 - Realistic change scenario:
-- Minimal fix:
-- Regression test suggestion:
-- Estimated effort:

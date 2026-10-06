@@ -4,7 +4,7 @@ Use the fuck-my-shit-mountain skill in **full mode**.
 
 Shared setup, coverage, report template, HTML, and lint rules live in `references/report-format.md`; load that reference before producing the report.
 
-Audit this repository as if it is preparing for a stable public release.
+Audit the selected repository scope using the project's actual purpose and maturity. Use release readiness as the context only when the user asks for it.
 
 Your job is not to insult the codebase. Your job is to identify real engineering risks with evidence.
 
@@ -54,55 +54,10 @@ Before writing findings, build a project map:
 24. **Code consistency audit** — check `prompts/code-consistency-audit.md` for naming conventions, import organization, error handling patterns, pattern uniformity, file structure, and boilerplate duplication
 25. **Comment coverage audit** — check `prompts/comment-coverage-audit.md` for missing public API docs, stale/misleading comments, over-commenting, module documentation gaps, and inline comment quality
 
-## Rules
+26. **Concurrency** — check `prompts/concurrency-audit.md` for reachable races, deadlocks, atomicity, shared-state invariants, cancellation, and contention.
 
-1. Every finding must include concrete evidence (file, function, behavior).
-2. Separate confirmed issues from suspected issues.
-3. Do not exaggerate severity. Use the severity rubric.
-4. Do not recommend rewrites unless local fixes are clearly insufficient.
-5. Prefer the smallest practical fix that reduces real risk.
-6. Do not produce generic advice.
-7. Do not complain about style unless it creates maintainability risk.
-8. If evidence is insufficient, say so.
-9. For each issue, include a regression test suggestion.
-10. Prioritize the top risks first.
-11. Cross-reference findings against `rubrics/principles.md`. For each principle violation, cite the specific principle (e.g., "SRP violation — principle 1.1").
+## Coverage and Output
 
-## Attitude
+The focused prompt filenames in `prompts/` are authoritative. Cover every focused dimension (excluding `full` and `incremental`), including any dimensions added after this checklist. Read the relevant focused prompt as each dimension is inspected. Mark inapplicable surfaces Not assessed with evidence; never imply they were tested.
 
-1. **Be exhaustively systematic.** Search all in-scope first-party areas, not just obvious hotspots. Follow the skill's coverage strategy and document exclusions honestly.
-2. **Do not be a yes-man.** Do not suppress findings to be agreeable. Report issues objectively regardless of who wrote the code. If the code has problems, say so.
-
-## Scoring
-
-After collecting all findings, assign dimension scores using `rubrics/scoring.md`:
-
-1. Review all findings per dimension.
-2. Judge the score (0.0–10.0, **10 = best / clean, 0 = worst / shit mountain**) based on **engineering quality and maintainability**, not on mechanical deduction.
-3. Each score must have a **one-sentence justification** summarizing the strongest evidence and any coverage limits.
-4. Render the score dashboard with ASCII bars and letter grades.
-5. Include the dashboard with justifications in the Executive Summary.
-
-## Output Format
-
-**IMPORTANT: Use the skill's templates, NOT the project's markdown style.**
-1. Each finding MUST follow `templates/issue-card.md` exactly.
-
-2. The report MUST follow `templates/audit-report.md` (or `templates/audit-report.html` for HTML).
-
-3. For HTML output: read `templates/audit-report.html` and generate a COMPLETE HTML file that copies the exact structure:
-   - Score dashboard: one .score-item per scoring dimension the user selected (full mode = Security, Stability, Performance, Testing, Maintainability, Design, Release). Do NOT show dimensions the user didn't pick.
-   - Executive summary: 2-4 paragraph overview covering project health, biggest risks, bright spots, priorities, and overall grade in context
-   - Coverage matrix: one row per selected dimension with coverage confidence, inspected evidence, and exclusions/limits
-   - Stats row with total + severity breakdown
-   - Top risks table with all findings
-   - Detailed findings with full evidence + fix boxes
-   - Per-dimension sections: one `<h3>` per audit dimension the user selected (full mode = ALL 25: Architecture, Security, Stability, Performance, Testing, Maintainability, Design, Release, Documentation, Configuration, Observability, Data-Integrity, Privacy, Accessibility, Supply-Chain, Cost, AI-Safety, Fallback, Testing-Authenticity, Type-Safety, Frontend-State, Backend-API, Dependency-Weight, Code-Consistency, Comment-Coverage). Each section starts with a coverage note and then has findings table + verified checklist. Do NOT skip any applicable section; mark conditionally irrelevant sections Not assessed with evidence.
-   - Design principles violations table + followed checklist
-   - Fix order with tables grouped by priority
-   - Quick wins grid
-   - Sidebar nav links: one per section, matching selected dimensions only
-   - Footer text
-   Do NOT skip any section. Do NOT use placeholder variables. Generate complete, self-contained HTML.
-3. Do NOT copy formatting, headings, or style from any `.md` file in the audited project.
-4. The project's own README, docs, or comments are not the report format.
+Shared finding fields, templates, localization markers, empty-report behavior, and lint rules are defined in `references/report-format.md`. Use `rubrics/scoring.md` to map the audit dimensions to seven score dimensions. Report root causes once, referencing their IDs from other relevant sections.

@@ -53,22 +53,11 @@ Focus on whether tests provide **real confidence** or just green checkmarks. Thi
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Testing
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: OverMocked / ImplDetail / ProdCodeForTest / HappyPathOnly / Brittle / FalseConfidence
-- Affected area:
-- Evidence:
-  - Test file:
-  - Production file (if test-specific logic):
-  - Test function:
-  - What it actually tests vs what it should test:
-- Problem:
 - Why it produces false confidence:
 - Recommended action: Rewrite / Delete / Keep but augment / Move to integration
-- Minimal fix:
 - Suggested replacement test:
-- Estimated effort:

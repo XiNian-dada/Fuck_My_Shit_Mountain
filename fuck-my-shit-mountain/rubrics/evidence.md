@@ -9,7 +9,7 @@
 | Runtime behavior | Test fails when input is empty | Strong |
 | Config inspection | `app.config.secret = "hardcoded-dev-key"` | Strong |
 | Dependency audit | Dependency v1.2.3 has CVE-2024-XXXX with public exploit | Strong |
-| Comment indicating risk | `// TODO: this can deadlock under load` | Strong |
+| Comment indicating risk | `// TODO: this can deadlock under load` | Weak until verified against code or runtime behavior |
 | Pattern inference | All handlers use `String::from_utf8_unchecked` | Medium |
 | Structural inference | File is 3000 lines with 20 public functions | Medium |
 | Missing pattern | No test file exists for `auth.rs` | Weak |
@@ -60,3 +60,5 @@ Optional but recommended:
 - Expected vs actual behavior:
 - Test that demonstrates the issue:
 ```
+
+Treat filenames, TODOs, line counts, and missing tools as leads. They do not establish a defect or its impact. Verify external vulnerability claims against authoritative advisories and the actual version/reachable usage before assigning severity.

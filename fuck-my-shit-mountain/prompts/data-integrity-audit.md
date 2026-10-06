@@ -61,21 +61,9 @@ Focus on whether the system preserves correct, durable, and recoverable data und
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Stability / Release / Testing
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: TransactionBoundary / Idempotency / ConcurrencyConsistency / MigrationSafety / InvariantValidation / BackupRestore / Reconciliation
-- Affected area:
 - Invariant at risk:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
-- Problem:
-- Realistic failure scenario:
-- Minimal fix:
-- Regression test suggestion:
-- Estimated effort:

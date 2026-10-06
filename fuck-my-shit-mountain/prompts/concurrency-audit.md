@@ -85,27 +85,12 @@ Focus on race conditions, deadlocks, atomicity violations, shared state manageme
 
 ## Attitude
 
-1. **Be exhaustively systematic.** Check all shared state, all lock acquisitions, all concurrent access patterns. Follow the skill's coverage strategy and document exclusions honestly.
-2. **Do not be a yes-man.** Do not skip issues because "we haven't hit this yet." Concurrency bugs are rare but catastrophic — report every realistic race or deadlock path.
-3. **Test evidence matters.** If the project doesn't run race detection or stress tests, that's a finding in itself.
+3. **Test evidence matters.** Missing race detection or stress tests is a confidence gap. Report it as a finding only when a reachable concurrent path and a meaningful regression-verification gap are demonstrated.
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Concurrency
-- Status: Confirmed / Suspected
-- Affected area:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
+Include these additional details when they help substantiate a finding:
+
 - Concurrent interleaving:
-- Failure scenario:
-- User-visible impact:
-- Minimal fix:
-- Better long-term fix:
-- Regression test suggestion:
-- Estimated effort:

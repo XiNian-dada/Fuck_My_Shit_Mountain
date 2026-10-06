@@ -52,19 +52,10 @@ Focus on realistic cost risks from compute, storage, network, queues, background
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Performance / Release / Stability
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: UnboundedWork / ExternalApiCost / LLMCost / InfrastructureSizing / ObservabilityCost / CostVisibility
 - Cost driver:
-- Evidence:
-  - File:
-  - Function / Module / config:
-  - Relevant behavior:
 - Realistic cost scenario:
-- Minimal fix:
-- Regression test suggestion:
-- Estimated effort:

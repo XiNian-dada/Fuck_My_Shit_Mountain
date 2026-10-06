@@ -68,22 +68,8 @@ Focus on API design, request/response contracts, data access patterns, and backe
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Security / Stability / Performance / Maintainability
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: ApiConsistency / Validation / Auth / NplusOne / Caching / ErrorResponse / BusinessLogic / DataFlow
-- Affected area:
-- Evidence:
-  - File:
-  - Endpoint / Handler:
-  - Relevant behavior:
-- Problem:
-- Why it matters:
-- Realistic failure scenario:
-- Minimal fix:
-- Better long-term fix:
-- Regression test suggestion:
-- Estimated effort:

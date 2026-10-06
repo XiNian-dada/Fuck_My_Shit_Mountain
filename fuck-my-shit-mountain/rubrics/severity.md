@@ -1,13 +1,15 @@
 # Severity Rubric
 
+Determine severity from demonstrated impact, likelihood, exposure, and existing safeguards. Examples below require those conditions; a scanner label, missing test/tool, code size, or naming pattern alone does not determine severity. Public endpoints, intentionally handled failures, and non-sensitive example values are not automatically vulnerabilities.
+
 ## Critical
 
 - Remote code execution or privilege escalation.
-- Credential or secret leakage in code, artifacts, or logs.
+- Exposed valid production credentials or secrets enabling significant unauthorized access.
 - Vulnerable dependency with known exploit in production use.
 - Data loss or corruption on normal operation.
 - Complete service unavailability on a realistic failure path.
-- No authentication on a production-facing endpoint.
+- Missing authentication on a production endpoint that exposes privileged actions or sensitive data without another effective boundary.
 
 ## High
 
@@ -19,7 +21,7 @@
 - Persistent data inconsistency on partial failure.
 - Missing input validation on security-sensitive paths.
 - Breaking change without version bump in a published package.
-- No test coverage on a critical path.
+- A demonstrated high-impact regression risk on a critical path that existing tests cannot detect; explain the behavior and confidence gap.
 
 ## Medium
 
@@ -36,7 +38,7 @@
 
 ## Low
 
-- Style violations that do not affect correctness.
+- Inconsistent conventions that create demonstrated maintenance cost without affecting correctness.
 - Missing comments on non-obvious logic.
 - Minor logging inconsistency.
 - Untested edge case in a low-risk path.

@@ -13,7 +13,7 @@
 - You have read the relevant code and can point to exact lines.
 - You have traced a control flow and identified a bug.
 - You have tested the behavior and confirmed the issue.
-- The code has a `TODO`, `FIXME`, `HACK`, or `SAFETY` comment indicating known risk.
+- A comment points to a risk that you independently verified in the code or runtime behavior; the comment alone is insufficient.
 
 ## Medium
 

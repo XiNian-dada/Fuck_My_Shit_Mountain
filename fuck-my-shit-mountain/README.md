@@ -4,12 +4,12 @@
 
 ## 功能
 
-- 审计代码库的 **27 个维度**（full 模式）：架构、安全、稳定性、性能、测试、可维护性、设计、发布、文档、配置、可观测性、数据完整性、隐私治理、可访问性、供应链、成本、AI/LLM 安全、降级、测试真实性、类型安全、前端状态、后端 API、依赖权重、代码一致性、注释覆盖率、**并发**
+- 审计代码库的 **26 个维度**（full 模式）：架构、安全、稳定性、性能、测试、可维护性、设计、发布、文档、配置、可观测性、数据完整性、隐私治理、可访问性、供应链、成本、AI/LLM 安全、降级、测试真实性、类型安全、前端状态、后端 API、依赖权重、代码一致性、注释覆盖率、**并发**
 - **增量审计模式**：只审计 git diff 中的变更文件，适用于 PR review 和持续审计
-- **智能权重推断**：根据项目特征（语言、框架、依赖）自动调整维度权重
+- **一致的评分口径**：默认对已评估核心维度取平均；用户要求加权时记录权重与计算依据
 - **审计范围控制**：支持路径模式、语义标签或 git 引用限定审计范围
 - **多格式输出**：支持 Markdown、HTML、JSON（便于 CI/CD 集成）
-- **历史追踪**：保存审计元数据到 `.claude/audits/`，便于趋势对比
+- **可选历史追踪**：用户要求时保存到指定目录或 `.audit-reports/history/`，记录范围与覆盖率，便于趋势对比
 - 生成结构化发现项，包含严重程度、置信度、证据和修复建议
 - 标注每个审计维度的覆盖置信度（High / Medium / Low / Not assessed）
 - 对 **7 个核心维度** 打分（0.0–10.0），附带等级 S/A/B/C/D/F
@@ -17,16 +17,13 @@
 - 每个发现预估修复工作量并排序风险
 - 每个发现附带回归测试建议
 
-## 交互式初始化
+## 输入与默认值
 
-审计前会先确认必要输入；如果你的提示词里已经写明，就不会重复追问。缺少模式时，会先做轻量项目画像，再用用户当前语言推荐自然语言选项：
+可以直接用自然语言表达审计需求。一般项目体检默认 `full`，报告语言默认跟随当前对话，输出默认 `stdout`（对话内报告，不写文件）。明确要求 `md`、`html`、`json` 或 `both` 时才生成相应文件。仅在范围或 Git 基线有实质歧义时追问，不重复确认已有选择。
 
-1. **选择模式？** — 可选”全量审计 / 增量审计（仅变更文件）/ 偏安全与隐私 / 偏前端体验 / 偏后端接口与数据 / 偏发布与运维 / 偏 AI 安全与成本 / 偏测试补强 / 偏可维护性与文档”等；高级用户也可以直接写 27 种内部模式，逗号分隔或 `full`
-2. **报告语言？** — 中文 / English / 其他
-3. **输出格式？** — `md` / `html` / `json` / `both` / `stdout`
-4. **审计范围？**（可选）— 路径模式（`src/auth/**`）、语义标签（`authentication`, `payments`）、或 git 引用（`main..HEAD` 用于增量审计）
+共有 26 个专项维度，以及 `full`、`incremental` 两个范围入口。增量模式可以与专项组合，例如 `incremental,security,concurrency`。PR 审计使用 `main...HEAD` 比较分叉点以来的变更；明确要求两端快照比较时保留 `v1.2.0..HEAD` 等范围。当前工作区或暂存区审计另行说明是否包含未提交与未跟踪文件。
 
-HTML 输出（`templates/audit-report.html`）是一个完整的渲染页面，含侧边栏导航、滚动监听、彩色评分条、各维度发现表 + 已验证清单、设计原则合规表、修复顺序表、速赢网格。JSON 输出遵循 `templates/audit-report.json` 的结构化 schema，便于工具链集成。
+HTML 保留侧边栏、评分卡片和各维度分析，以固定标记识别结构并允许本地化。Markdown 的隐藏章节/字段标记不影响阅读。JSON 遵循 `templates/audit-report.json`；允许零发现、未评估分数为 `null`，每个专项使用统一的发现项字段。
 
 ## 安装与使用
 
@@ -71,7 +68,7 @@ cp -R Fuck_My_Shit_Mountain/fuck-my-shit-mountain ~/.codex/skills/
 ```text
 使用 fuck-my-shit-mountain 审计本次 PR 的变更
 模式：incremental
-范围：main..HEAD
+范围：main...HEAD
 报告语言：中文
 输出格式：json
 ```
@@ -90,7 +87,7 @@ cp -R Fuck_My_Shit_Mountain/fuck-my-shit-mountain ~/.codex/skills/
 
 | 命令 | 范围 |
 |------|------|
-| `run full-audit` | 全部 27 个审计维度 |
+| `run full-audit` | 全部 26 个审计维度 |
 | `run incremental-audit` | **增量审计**：只审计 git diff 中的变更文件（需配合 scope 参数） |
 | `run concurrency-audit` | **并发审计**：竞态条件、死锁、原子性、共享状态、锁策略 |
 | `run architecture-audit` | 架构边界、依赖方向、状态所有权 |
@@ -143,9 +140,10 @@ cp -R Fuck_My_Shit_Mountain/fuck-my-shit-mountain ~/.codex/skills/
 ```bash
 python3 fuck-my-shit-mountain/scripts/report_lint.py --modes full audit-report-*.md
 python3 fuck-my-shit-mountain/scripts/report_lint.py --modes security,release audit-report-*.html
+python3 fuck-my-shit-mountain/scripts/report_lint.py --modes incremental,security audit-report-*.json
 ```
 
-它会检查残留模板占位符、必要章节、所选维度 section、Markdown finding 字段、严重程度统计一致性，以及疑似未脱敏 secret。
+校验器仅依赖 Python 标准库，支持 Markdown、HTML、JSON：检查占位符、所选维度、必填字段、枚举值、数量和状态统计、HTML 导航与结构、JSON 引用及评分一致性。密钥诊断不回显匹配值；其检查不能代替完整的密钥扫描和人工证据核实。
 
 ## 文件结构
 
@@ -154,7 +152,7 @@ fuck-my-shit-mountain/
   SKILL.md              技能入口 — 工作方式和规则
   README.md             本文件
   agents/               UI metadata（openai.yaml）
-  prompts/              审计提示词模板（27 种模式，含 incremental 和 concurrency）
+  prompts/              审计提示词模板（28 种模式，含 incremental 和 concurrency）
   references/           公共报告格式、HTML、coverage、lint、工具参考
   rubrics/              严重程度、置信度、证据、原则、评分
   scripts/              项目画像、生成报告后的 lint / 校验脚本
@@ -167,11 +165,11 @@ fuck-my-shit-mountain/
 每个维度 0.0–10.0 分，等级 S/A/B/C/D/F：
 
 ```
-Security        ████████░░  8.0  A   No auth on WS, hardcoded secret in config
+Security        ████████░░  8.0  A   Owner checks verified; one contained session-expiry gap
 Stability       ██████░░░░  6.0  B   3 unwrap on hot path, no retry on DB
-Performance     ██████████  10.0 S   No issues found
+Performance     ██████████  10.0 S   High coverage of critical flows; no bottlenecks found
 Testing         ████░░░░░░  4.0  C   9 integration tests real, but unit is weak
-Maintainability ███████░░░  7.0  A   3 files over 800 lines, SRP violated in 2 modules
+Maintainability ███████░░░  7.0  A   Shared parsing logic creates recurring change cost
 Design          █████░░░░░  5.0  B   DRY violated 5x, fail-fast missing at API boundary
 Release         ██████░░░░  6.0  B   No CI on Windows, no rollback plan
 ─────────────────────────────────────
@@ -187,7 +185,7 @@ Overall         ██████░░░░  6.6  B
 - 禁止对代码质量的泛泛抱怨
 - 禁止默认建议重写
 - 区分**已确认**和**待确认**问题
-- 每个发现附带**回归测试建议**
+- 每个发现附带**回归验证建议**（自动测试或有意义的手动检查）
 - 每个发现预估**修复工作量**
 - 系统化覆盖一方源代码、测试、配置、依赖和发布文件，并在报告中说明排除项
 - 发现密钥、令牌或私钥时必须脱敏报告，不输出完整敏感值

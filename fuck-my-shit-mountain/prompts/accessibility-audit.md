@@ -54,20 +54,10 @@ Focus on whether browser/client UI workflows remain usable, understandable, and 
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Testing / Maintainability / Design
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: SemanticStructure / KeyboardFocus / ResponsiveVisual / ErrorState / LoadingState / UXStateCorrectness
 - Affected workflow:
-- Evidence:
-  - File:
-  - Component / View:
-  - Relevant behavior:
-- Problem:
 - User-visible failure scenario:
-- Minimal fix:
-- Regression test suggestion:
-- Estimated effort:

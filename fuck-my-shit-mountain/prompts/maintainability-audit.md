@@ -61,11 +61,6 @@ Focus on maintainability, complexity, coupling, and design risk.
 - Default values duplicated across code paths — DRY violation
 - Feature flags that are never cleaned up — YAGNI violation
 
-## Attitude
-
-1. **Be exhaustively systematic.** Check all in-scope first-party files and modules. Follow the skill's coverage strategy and document exclusions honestly.
-2. **Do not be a yes-man.** Report design problems even if "it works." Bad design accumulates interest.
-
 ## Rules
 
 1. Do not recommend abstraction unless it removes real duplication, coupling, or confusion.
@@ -75,20 +70,11 @@ Focus on maintainability, complexity, coupling, and design risk.
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Maintainability
-- Status: Confirmed / Suspected
-- Affected area:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
+Include these additional details when they help substantiate a finding:
+
 - Why this affects maintainability:
 - Risk of changing it:
 - Local fix:
-- Better long-term fix:
 - Test needed before refactor:
-- Estimated effort:

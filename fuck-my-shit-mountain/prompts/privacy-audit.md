@@ -53,20 +53,10 @@ Focus on personal data handling, data minimization, retention, deletion, export,
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Security / Stability / Release
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: DataInventory / Minimization / AccessBoundary / Retention / Deletion / Export / TelemetryPrivacy
 - Affected data:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
-- Problem:
 - Realistic privacy failure scenario:
-- Minimal fix:
-- Regression test suggestion:
-- Estimated effort:

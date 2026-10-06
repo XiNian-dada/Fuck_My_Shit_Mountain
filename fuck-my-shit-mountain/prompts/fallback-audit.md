@@ -46,23 +46,13 @@ Focus on "无异议兜底" — silent fallbacks, default values, empty catch blo
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Stability
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: SilentFallback / EmptyCatch / CompatibilityBranch / SilentCorrection / DefensiveGuess
-- Affected area:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
 - What it falls back from:
 - Why the original path can fail:
 - Is the fallback necessary? (Yes / No / Partial):
 - If yes, is it monitored?:
 - Recommended action: KeepWithAlert / FailFast / Remove / Restructure
-- Minimal fix:
-- Regression test:
-- Estimated effort:

@@ -56,31 +56,16 @@ Focus only on security-relevant risks.
 3. Separate confirmed issues from suspected issues.
 4. For each issue, include a specific mitigation and a regression test.
 
-## Attitude
-
-1. **Be exhaustively systematic.** Check all in-scope endpoints, auth paths, input boundaries, and dependency evidence. Follow the skill's coverage strategy and document exclusions honestly.
-2. **Do not be a yes-man.** Report security issues objectively. Do not downplay because the project "is just internal" or "nobody will attack us."
-
-
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Security
-- Status: Confirmed / Suspected
-- Affected area:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
+Include these additional details when they help substantiate a finding:
+
 - Attack precondition:
 - Attack path:
 - Impact:
 - Mitigation:
-- Regression test suggestion:
-- Estimated effort:
 
 ## Focus
 

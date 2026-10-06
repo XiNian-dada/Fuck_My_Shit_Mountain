@@ -66,26 +66,17 @@ Focus on realistic bottlenecks, not premature micro-optimization.
 ## Attitude
 
 1. **Be exhaustive.** Scan every hot path, every query, every allocation pattern. One unoptimized query can kill production at scale.
-2. **Do not be a yes-man.** Report bottlenecks even if the user says "it's fast enough for now." Your job is to identify where it will break under load.
 
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Performance
-- Status: Confirmed / Suspected
-- Affected area:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
+Include these additional details when they help substantiate a finding:
+
 - Workload where this matters:
 - Bottleneck mechanism:
 - Expected impact:
 - Minimal optimization:
 - Better long-term optimization:
 - Benchmark or test suggestion:
-- Estimated effort:

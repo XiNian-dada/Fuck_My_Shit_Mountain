@@ -47,7 +47,7 @@ Focus on code style consistency, naming conventions, pattern uniformity, and adh
 ## Rules
 
 1. Focus on inconsistencies that create **real maintenance cost**, not aesthetic preferences.
-2. A single inconsistent file is noise; a pattern of inconsistency across 5+ locations is a finding.
+2. Use frequency to prioritize investigation; report inconsistency only when it creates demonstrated maintenance cost, regardless of occurrence count.
 3. Do NOT suggest a full codebase reformat — suggest targeted extraction or lint rule additions.
 4. If the project has an existing style guide or linter config, check compliance against it.
 5. Consider whether a `clippy`/`eslint`/`ruff` rule could catch the inconsistency automatically.
@@ -55,20 +55,11 @@ Focus on code style consistency, naming conventions, pattern uniformity, and adh
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Maintainability
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: NamingConvention / ImportOrganization / ErrorHandlingConsistency / PatternUniformity / FileStructure / Boilerplate
-- Evidence:
-  - File(s):
-  - Pattern observed:
-  - Expected convention:
 - Number of occurrences:
 - Why this creates maintenance cost:
 - Minimal fix (extract + unify):
-- Better long-term fix:
-- Regression test suggestion:
-- Estimated effort:

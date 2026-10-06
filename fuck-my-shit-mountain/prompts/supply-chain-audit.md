@@ -53,20 +53,10 @@ Focus on dependency provenance, build reproducibility, artifact integrity, CI pi
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Security / Release
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: DependencyProvenance / Reproducibility / CIIntegrity / ArtifactProvenance / RegistryHygiene
 - Affected surface:
-- Evidence:
-  - File:
-  - Workflow / manifest / artifact:
-  - Relevant behavior:
 - Attack precondition:
-- Problem:
-- Minimal fix:
-- Regression test suggestion:
-- Estimated effort:

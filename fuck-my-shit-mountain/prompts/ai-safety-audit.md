@@ -60,19 +60,10 @@ Focus on AI/LLM application risks: prompt injection, tool authorization, RAG dat
 
 ## Finding Format
 
-### Finding: <short title>
+Use the common fields in `templates/issue-card.md` and the format rules in `references/report-format.md`. Specialized evidence supplements those fields; it does not replace them.
 
-- Severity: Critical / High / Medium / Low / Info
-- Confidence: High / Medium / Low
-- Category: Security / Stability / Testing / Performance
-- Status: Confirmed / Suspected
+Include these additional details when they help substantiate a finding:
+
 - Subtype: PromptInjection / ToolAuthorization / RAGLeakage / ModelFallback / OutputValidation / EvalGap / AbuseCost
 - Boundary crossed:
-- Evidence:
-  - File:
-  - Function / Module:
-  - Relevant behavior:
 - Attack or failure path:
-- Minimal fix:
-- Regression test suggestion:
-- Estimated effort:
