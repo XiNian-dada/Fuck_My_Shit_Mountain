@@ -44,7 +44,7 @@ Use a statistics table with severity / count / confirmed / suspected columns in 
 
 ## HTML
 
-Read `templates/audit-report.html`. Retain its CSS and reusable card structures, and repeat or remove dynamic rows/cards for actual data. Localize visible labels and the `lang` attribute. Do not preserve example text or force unused dimensions into the report.
+Read the selected HTML template: `templates/audit-report.html` (classic), `templates/audit-report-obsidian.html` (Obsidian Cyber), `templates/audit-report-swiss.html` (Swiss Editorial Paper), or `templates/audit-report-aurora.html` (Aurora Console). Retain its CSS and reusable card structures, and repeat or remove dynamic rows/cards for actual data. Localize visible labels and the `lang` attribute. Do not preserve example text or force unused dimensions into the report.
 
 - Use the same required section IDs as Markdown markers. Add one real element ID per selected dimension. Create navigation links only to real section IDs.
 - Wrap each finding in `data-finding="F1"`. Put each required field's value inside an element with `data-field="<machine-field>"`; labels belong outside that element. For enums, that element contains only the canonical value.

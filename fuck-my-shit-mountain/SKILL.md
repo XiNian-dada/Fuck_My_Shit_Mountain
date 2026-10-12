@@ -12,9 +12,15 @@ Produce a calm, evidence-based audit that identifies realistic risks, explains t
 Use the user's existing choices and authorization. Do not ask again for supplied information.
 
 - **Modes:** Map natural-language concerns to the modes below. Default a general repository health audit to `full`. If the request leaves a material scope ambiguity, inventory the project with `scripts/project_inventory.py <project-root> --format json` and offer a few localized choices, then ask only about that ambiguity.
-- **Language:** Default to the user's conversation language. Keep machine identifiers and enum values stable; localize the report's visible labels and prose.
-- **Format:** Default to `stdout`. Accept `md`, `html`, `json`, or `both` (Markdown + HTML) when requested. Write complete files to the requested location. Otherwise use `audit-report-<project>-<date>.<ext>` in the project root; use a time suffix if that name exists. Do not overwrite an earlier report accidentally.
-- **Scope:** Default to the entire project. Respect supplied paths, globs, semantic areas, and Git references. Incremental mode requires a resolvable base/head or explicit worktree scope; see `prompts/incremental-audit.md`. If the base cannot be determined from the request, PR metadata, or configured remote default branch, ask for it. Do not guess or fetch implicitly.
+- **Format & HTML Theme:** Default to `stdout`. Accept `md`, `html`, `json`, or `both` (Markdown + HTML) when requested. Write complete files to the requested location. Otherwise use `audit-report-<project>-<date>.<ext>` in the project root; use a time suffix if that name exists. Do not overwrite an earlier report accidentally.
+  - When `html` or `both` is requested, check if an HTML theme was specified (`classic`/`legacy`, `obsidian`, `swiss`, `aurora`, or `random`).
+  - If no theme was specified, ask the user whether they prefer the classic template or one of the three new designs:
+    1. **旧版经典** (`classic` — `templates/audit-report.html`)
+    2. **新版 · 黑曜极客** (`obsidian` — `templates/audit-report-obsidian.html`，Raycast/Linear 暗黑硬核风格)
+    3. **新版 · 瑞士极简** (`swiss` — `templates/audit-report-swiss.html`，Stripe Press 典雅纸质风，打印/汇报首选)
+    4. **新版 · 极光控制台** (`aurora` — `templates/audit-report-aurora.html`，现代交互控制台，支持日夜模式切换与即时搜索)
+    5. **AI 随机挑选新版** (`random` — 由 AI 从 3 款新版中随机选择一款)
+  - If `random` is selected, pick one among `obsidian`, `swiss`, or `aurora`. Load the corresponding template from `templates/`.
 - **History:** Save history only when the user requests it, to their chosen directory or `.audit-reports/history/`. Record timestamp, resolved commit(s), dirty worktree state, modes, scope, assessed scores, finding counts, and report path. `stdout` alone creates no files.
 
 ## Workflow and Resource Loading
@@ -25,7 +31,7 @@ Use the user's existing choices and authorization. Do not ask again for supplied
 4. Read the selected focused prompts. For `full` or unrestricted `incremental`, use `prompts/full-audit.md` as the coverage checklist and read relevant focused prompts as each dimension is inspected. Do not preload every reference. Read `references/tooling.md` when configured checks could improve evidence; use examples only for calibration, never as findings to copy.
 5. Map entry points, module boundaries, data flow, state ownership, persistence, external interfaces, security/privacy boundaries, AI/tool surfaces, tests, and release process. Trace candidate problems through callers and safeguards before reporting them.
 6. Record findings with the common fields in `templates/issue-card.md`. Focused prompts add evidence or optional fields; they never replace the common contract. Include a concrete trigger, impact, minimal fix, regression verification, and effort estimate. A manual check or documentation check is appropriate when an automated regression test would add no confidence.
-7. Generate only the requested output using the matching template. Include all selected dimensions, with evidence and explanations for those marked Not assessed. The shared reference defines format-specific markers, statistics, and empty-report behavior.
+7. Generate only the requested output using the matching template (for HTML, load the chosen template from `templates/`: `audit-report.html` for classic, or `audit-report-obsidian.html`, `audit-report-swiss.html`, `audit-report-aurora.html` for new designs). Include all selected dimensions, with evidence and explanations for those marked Not assessed. The shared reference defines format-specific markers, statistics, and empty-report behavior.
 8. Run `python3 <skill-dir>/scripts/report_lint.py --modes <selected-modes> <report-file>` for each generated file. Repair failures and rerun the relevant check. For `stdout`, apply the same checks manually. If tooling is unavailable, report the validation limit and perform the feasible manual checks; do not claim lint passed. If a validator defect prevents validation, preserve the report and explain the unresolved check instead of looping indefinitely.
 9. Provide the report or file links, the highest-priority risks, and material coverage/validation limits. Use `templates/remediation-plan.md` only when a separate remediation plan is requested. If the user also requested implementation, finish the audit first, then fix the authorized scope.
 

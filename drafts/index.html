@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fuck My Shit Mountain — 新版 HTML 模板设计草稿展厅</title>
+<style>
+  :root {
+    --bg: #090d16;
+    --card-bg: rgba(17, 24, 39, 0.7);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.2);
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(circle at 20% 15%, rgba(99, 102, 241, 0.15), transparent 45%),
+      radial-gradient(circle at 80% 30%, rgba(236, 72, 153, 0.12), transparent 40%),
+      radial-gradient(circle at 50% 80%, rgba(56, 189, 248, 0.1), transparent 50%);
+    padding: 3rem 2rem 6rem;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Hero */
+  .hero { text-align: center; margin-bottom: 3.5rem; }
+  .badge-hub {
+    display: inline-block; padding: 0.3rem 0.85rem; border-radius: 999px;
+    background: rgba(99, 102, 241, 0.15); color: #818cf8;
+    border: 1px solid rgba(99, 102, 241, 0.3); font-size: 0.8rem; font-weight: 700;
+    margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .hero h1 {
+    font-size: 2.75rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, #ffffff 40%, #94a3b8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 680px; margin: 0 auto; }
+
+  /* Grid of 3 Designs */
+  .draft-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 2rem; margin-bottom: 4rem;
+  }
+
+  .draft-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 20px; overflow: hidden; backdrop-filter: blur(16px);
+    display: flex; flex-direction: column; justify-content: space-between;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    position: relative;
+  }
+  .draft-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--border-hover);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+  }
+
+  .preview-banner {
+    height: 180px; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Specific Banner Themes */
+  .banner-1 {
+    background: linear-gradient(135deg, #0f172a, #1e1b4b);
+  }
+  .banner-2 {
+    background: linear-gradient(135deg, #ffffff, #f1f5f9);
+    color: #0f172a;
+  }
+  .banner-3 {
+    background: linear-gradient(135deg, #18181b, #312e81);
+  }
+
+  .banner-content { text-align: center; }
+  .banner-icon { font-size: 3rem; margin-bottom: 0.25rem; }
+  .banner-tag {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0.2rem 0.6rem; border-radius: 6px;
+  }
+  .banner-1 .banner-tag { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+  .banner-2 .banner-tag { background: #0f172a; color: #ffffff; }
+  .banner-3 .banner-tag { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+
+  .draft-body { padding: 1.75rem 2rem; flex: 1; display: flex; flex-direction: column; gap: 1rem; }
+  .draft-title { font-size: 1.35rem; font-weight: 800; color: #fff; }
+  .draft-subtitle { font-size: 0.85rem; color: #818cf8; font-weight: 600; text-transform: uppercase; }
+  .draft-desc { font-size: 0.925rem; color: var(--text-muted); line-height: 1.6; }
+
+  .features-list { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.85rem; color: #cbd5e1; }
+  .features-list li::before { content: '✓ '; color: #34d399; font-weight: 800; }
+
+  .draft-footer { padding: 1.25rem 2rem 1.75rem; border-top: 1px solid var(--border); }
+  .preview-btn {
+    display: block; width: 100%; text-align: center;
+    background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border);
+    color: #fff; text-decoration: none; padding: 0.8rem 1.25rem;
+    border-radius: 10px; font-weight: 700; font-size: 0.925rem;
+    transition: all 0.2s;
+  }
+  .preview-btn:hover {
+    background: #6366f1; border-color: #6366f1;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  }
+
+  /* Comparison Section */
+  .compare-section {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 18px; padding: 2rem 2.5rem; backdrop-filter: blur(12px);
+  }
+  .compare-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 1.25rem; }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .compare-table th {
+    text-align: left; padding: 0.85rem 1rem; font-weight: 700; color: var(--text-muted);
+    border-bottom: 1px solid var(--border); font-size: 0.8rem; text-transform: uppercase;
+  }
+  .compare-table td { padding: 1rem; border-bottom: 1px solid var(--border); }
+  .compare-table tr:last-child td { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="hero">
+    <div class="badge-hub">Design Prototypes Showcase</div>
+    <h1>HTML 审计报告全新模板草稿</h1>
+    <p>
+      我们准备了 3 款风格迥异的前端视觉方案供您预览与对比。在您挑选并确认偏好之前，现有 Skill 核心文件均保持不变。
+    </p>
+  </header>
+
+  <div class="draft-grid">
+
+    <!-- Draft 1 -->
+    <div class="draft-card">
+      <div class="preview-banner banner-1">
+        <div class="banner-content">
+          <div class="banner-icon">🌌</div>
+          <span class="banner-tag">Obsidian Cyber</span>
+        </div>
+      </div>
+      <div class="draft-body">
+        <div class="draft-subtitle">方案 1 · 深色硬核</div>
+        <h2 class="draft-title">黑曜极客 (Obsidian Cyber)</h2>
+        <p class="draft-desc">
+          灵感源于 Raycast 与 Linear 的顶级暗黑美学。深炭黑背景、发光霓虹微渐变、毛玻璃质感，营造专业且令人敬畏的代码安全监控站氛围。
+        </p>
+        <ul class="features-list">
+          <li>巨大发光总体健康指数表盘 (Overall 6.4/10)</li>
+          <li>7 维度诊断彩色光晕进度条与状态芯片</li>
+          <li>严重度左侧发光高亮条与独立代码高亮块</li>
+          <li>按严重度过滤芯片 (Critical / High / Med)</li>
+        </ul>
+      </div>
+      <div class="draft-footer">
+        <a href="draft-1-obsidian-dark.html" target="_blank" class="preview-btn">
+          在新窗口打开草稿 1 预览 ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- Draft 2 -->
+    <div class="draft-card">
+      <div class="preview-banner banner-2">
+        <div class="banner-content">
+          <div class="banner-icon">📄</div>
+          <span class="banner-tag">Swiss Editorial</span>
+        </div>
+      </div>
+      <div class="draft-body">
+        <div class="draft-subtitle">方案 2 · 浅色典雅</div>
+        <h2 class="draft-title" style="color: #fff;">瑞士极简 (Swiss Editorial Paper)</h2>
+        <p class="draft-desc">
+          灵感源于 Stripe Press 与经典瑞士设计风格。极度纯净的白色纸质感、优雅的无衬线字体与精准的留白，适合打印、导出 PDF 或向上汇报。
+        </p>
+        <ul class="features-list">
+          <li>双栏杂志级排版（左侧黏性指标卡，右侧故事流）</li>
+          <li>印章式评级标识 (Grade Stamp) 与纯黑白高反差</li>
+          <li>结构化“问题剖析 - 最小修复 - 回归测试”卡片</li>
+          <li>高雅克制，毫无多余杂质，企业级权威感</li>
+        </ul>
+      </div>
+      <div class="draft-footer">
+        <a href="draft-2-swiss-paper.html" target="_blank" class="preview-btn">
+          在新窗口打开草稿 2 预览 ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- Draft 3 -->
+    <div class="draft-card">
+      <div class="preview-banner banner-3">
+        <div class="banner-content">
+          <div class="banner-icon">⚡</div>
+          <span class="banner-tag">Aurora Console</span>
+        </div>
+      </div>
+      <div class="draft-body">
+        <div class="draft-subtitle">方案 3 · 现代交互</div>
+        <h2 class="draft-title">极光控制台 (Aurora Console)</h2>
+        <p class="draft-desc">
+          灵感源于 Vercel Dashboard 与 Supabase Studio。兼具顶尖现代感与丰富的动态交互体验，支持一键日间/暗黑切换与实时搜索。
+        </p>
+        <ul class="features-list">
+          <li><strong>支持一键切换日夜间主题（Dark / Light Mode）</strong></li>
+          <li>KPI 矩阵顶部统计卡片与水平维度网格</li>
+          <li><strong>实时输入搜索过滤（Live Search Filtering）</strong></li>
+          <li>缺陷卡片手风琴折叠展开与选项卡切换</li>
+        </ul>
+      </div>
+      <div class="draft-footer">
+        <a href="draft-3-modern-console.html" target="_blank" class="preview-btn">
+          在新窗口打开草稿 3 预览 ↗
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Comparison Matrix -->
+  <section class="compare-section">
+    <h3 class="compare-title">三款设计方案核心维度对比</h3>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>特性 / 维度</th>
+          <th>草稿 1 · 黑曜极客</th>
+          <th>草稿 2 · 瑞士极简</th>
+          <th>草稿 3 · 极光控制台</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>默认视觉基调</strong></td>
+          <td>纯粹暗黑 (Deep Obsidian Dark)</td>
+          <td>纯净浅白纸质 (Swiss Crisp White)</td>
+          <td>暗黑为主，支持实时切白</td>
+        </tr>
+        <tr>
+          <td><strong>核心情感认知</strong></td>
+          <td>极客、硬核、深邃、技术威慑感</td>
+          <td>严谨、权威、典雅、高管汇报感</td>
+          <td>现代、高效、灵动、全栈协作感</td>
+        </tr>
+        <tr>
+          <td><strong>交互丰富度</strong></td>
+          <td>中等（过滤芯片、复制等）</td>
+          <td>轻量（专注清晰阅读与打印）</td>
+          <td>高度交互（实时搜索、折叠、主题切换）</td>
+        </tr>
+        <tr>
+          <td><strong>排版布局</strong></td>
+          <td>流式单栏 + 顶部 Hero 仪表盘</td>
+          <td>经典双栏杂志风（侧边栏黏性固定）</td>
+          <td>全景 KPI 仪表盘 + 模块化流</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+</body>
+</html>

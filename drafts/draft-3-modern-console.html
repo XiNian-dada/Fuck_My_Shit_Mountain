@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fuck My Shit Mountain — 草稿三：现代控制台 (Aurora Console)</title>
+<style>
+  :root {
+    --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-theme="light"] {
+    --bg-page: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-subtle: #f1f5f9;
+    --border: #e2e8f0;
+    --border-hover: #cbd5e1;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --accent: #4f46e5;
+    --accent-light: #e0e7ff;
+    --code-bg: #0f172a;
+    --code-text: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  }
+
+  [data-theme="dark"] {
+    --bg-page: #0b0f19;
+    --bg-surface: #111827;
+    --bg-subtle: #1f2937;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.16);
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+    --accent: #6366f1;
+    --accent-light: rgba(99, 102, 241, 0.15);
+    --code-bg: #030712;
+    --code-text: #e5e7eb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 20px -3px rgba(0, 0, 0, 0.5);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.55;
+    transition: background-color 0.25s, color 0.25s;
+    min-height: 100vh;
+  }
+
+  /* Top App Navigation */
+  .app-header {
+    background: var(--bg-surface); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 50; padding: 0.75rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
+  }
+  .header-left { display: flex; align-items: center; gap: 1rem; }
+  .logo-box {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; color: #fff;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+  }
+  .project-title { font-weight: 700; font-size: 1.05rem; }
+  .status-tag {
+    font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem;
+    border-radius: 999px; background: var(--accent-light); color: var(--accent);
+  }
+
+  .header-actions { display: flex; align-items: center; gap: 0.75rem; }
+  .icon-btn {
+    background: var(--bg-subtle); border: 1px solid var(--border);
+    color: var(--text-primary); border-radius: 8px; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: var(--transition); font-size: 1.05rem;
+  }
+  .icon-btn:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+
+  /* Main Container */
+  .app-container { max-width: 1380px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+
+  /* Hero Metric Section */
+  .kpi-grid {
+    display: grid; grid-template-columns: 320px repeat(3, 1fr); gap: 1.25rem; margin-bottom: 2rem;
+  }
+  @media (max-width: 1024px) {
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+  }
+
+  .kpi-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem; box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; justify-content: space-between;
+    transition: var(--transition);
+  }
+  .kpi-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-md); }
+
+  .kpi-card.hero-kpi {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(236, 72, 153, 0.04));
+    border-color: rgba(99, 102, 241, 0.3);
+  }
+  .kpi-header { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .kpi-val { font-size: 2.75rem; font-weight: 900; line-height: 1.1; margin: 0.5rem 0; letter-spacing: -0.04em; }
+  .kpi-footer { font-size: 0.8rem; color: var(--text-secondary); }
+
+  /* Horizontal Dimension Bar Stack */
+  .dimension-section {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem 2rem; margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .dim-grid-modern {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem 2rem; margin-top: 1rem;
+  }
+  .dim-box { display: flex; flex-direction: column; gap: 0.4rem; }
+  .dim-box-top { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; }
+  .dim-slider { height: 7px; background: var(--bg-subtle); border-radius: 999px; overflow: hidden; }
+  .dim-slider-fill { height: 100%; border-radius: 999px; }
+
+  /* Toolbar: Search & Segmented Filter */
+  .action-toolbar {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 0.75rem 1.25rem; margin-bottom: 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-sm);
+  }
+  .search-wrapper { position: relative; min-width: 280px; }
+  .search-input {
+    width: 100%; background: var(--bg-subtle); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.45rem 0.85rem 0.45rem 2rem;
+    font-size: 0.85rem; color: var(--text-primary); outline: none;
+    transition: var(--transition);
+  }
+  .search-input:focus { border-color: var(--accent); background: var(--bg-surface); }
+  .search-icon {
+    position: absolute; left: 0.65rem; top: 50%; transform: translateY(-50%);
+    font-size: 0.85rem; color: var(--text-muted); pointer-events: none;
+  }
+
+  .filter-segmented { display: flex; background: var(--bg-subtle); border-radius: 8px; padding: 3px; gap: 3px; }
+  .seg-btn {
+    border: none; background: transparent; padding: 0.35rem 0.75rem;
+    font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);
+    border-radius: 6px; cursor: pointer; transition: var(--transition);
+  }
+  .seg-btn:hover { color: var(--text-primary); }
+  .seg-btn.active { background: var(--bg-surface); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+
+  /* Findings List with Expandable Tabs */
+  .findings-stream { display: flex; flex-direction: column; gap: 1rem; }
+
+  .console-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+  }
+  .console-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-md); }
+
+  .card-summary-row {
+    padding: 1.25rem 1.5rem; display: flex; justify-content: space-between;
+    align-items: center; cursor: pointer; gap: 1rem;
+  }
+  .card-left { display: flex; flex-direction: column; gap: 0.35rem; }
+  .tag-capsules { display: flex; gap: 0.5rem; align-items: center; }
+  .capsule {
+    font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.55rem;
+    border-radius: 4px; text-transform: uppercase;
+  }
+  .capsule-crit { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+  .capsule-high { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+  .capsule-med { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+  .capsule-muted { background: var(--bg-subtle); color: var(--text-muted); }
+
+  .item-title { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }
+  .item-location { font-family: ui-monospace, monospace; font-size: 0.8rem; color: var(--text-muted); }
+
+  /* Expanded Detail Tabs */
+  .card-expanded-content {
+    border-top: 1px solid var(--border); background: var(--bg-subtle);
+    padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;
+  }
+
+  .tabs-nav { display: flex; gap: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+  .tab-link {
+    font-size: 0.85rem; font-weight: 600; color: var(--text-muted);
+    cursor: pointer; padding: 0.25rem 0; position: relative;
+  }
+  .tab-link.active { color: var(--accent); }
+  .tab-link.active::after {
+    content: ''; position: absolute; bottom: -0.55rem; left: 0; right: 0;
+    height: 2px; background: var(--accent);
+  }
+
+  .tab-panel { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .code-container {
+    background: var(--code-bg); color: var(--code-text);
+    border-radius: 8px; padding: 1rem 1.25rem; font-family: ui-monospace, monospace;
+    font-size: 0.85rem; overflow-x: auto; position: relative;
+  }
+  .copy-code-chip {
+    position: absolute; right: 0.75rem; top: 0.75rem;
+    background: rgba(255, 255, 255, 0.1); border: none; color: #fff;
+    padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer;
+  }
+
+  /* Footer */
+  .app-footer {
+    margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.85rem; color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-left">
+    <div class="logo-box">FS</div>
+    <span class="project-title">PaymentCore Engine v2.4.0</span>
+    <span class="status-tag">草稿 3 · 极光控制台 (Aurora Console)</span>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" id="themeToggle" title="切换暗黑/日间模式">🌙</button>
+  </div>
+</header>
+
+<div class="app-container">
+
+  <!-- KPI Top Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card hero-kpi">
+      <div class="kpi-header">综合质量评分 (Overall Score)</div>
+      <div class="kpi-val" style="color: var(--accent);">6.4 <span style="font-size: 1.25rem; font-weight: 600;">/ 10</span></div>
+      <div class="kpi-footer">评级 <strong>Grade B</strong> · 发现 1 项高危阻塞风险</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-header">Critical 致命问题</div>
+      <div class="kpi-val" style="color: #ef4444;">1</div>
+      <div class="kpi-footer">生产鉴权降级隐患 (需立项修复)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-header">High 高危风险</div>
+      <div class="kpi-val" style="color: #f59e0b;">3</div>
+      <div class="kpi-footer">TOCTOU 竞态超卖 & 网关超时崩溃</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-header">已闭环审查维度</div>
+      <div class="kpi-val" style="color: #10b981;">26 / 26</div>
+      <div class="kpi-footer">覆盖全量架构、安全、并发与稳定性</div>
+    </div>
+  </div>
+
+  <!-- 核心维度条状网格 -->
+  <section class="dimension-section">
+    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+      <h3 style="font-size: 1rem; font-weight: 700;">核心维度诊断总览</h3>
+      <span style="font-size: 0.8rem; color: var(--text-muted);">基于客观工程证据，非主观推断</span>
+    </div>
+    <div class="dim-grid-modern">
+      <div class="dim-box">
+        <div class="dim-box-top"><span>安全合规 (Security)</span><span style="color: #f59e0b">8.0 A</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 80%; background: #f59e0b;"></div></div>
+      </div>
+      <div class="dim-box">
+        <div class="dim-box-top"><span>可靠稳定 (Stability)</span><span style="color: #f59e0b">5.5 B</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 55%; background: #f59e0b;"></div></div>
+      </div>
+      <div class="dim-box">
+        <div class="dim-box-top"><span>并发安全 (Concurrency)</span><span style="color: #ef4444">4.5 C</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 45%; background: #ef4444;"></div></div>
+      </div>
+      <div class="dim-box">
+        <div class="dim-box-top"><span>性能响应 (Performance)</span><span style="color: #10b981">9.5 S</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 95%; background: #10b981;"></div></div>
+      </div>
+      <div class="dim-box">
+        <div class="dim-box-top"><span>测试真实度 (Testing)</span><span style="color: #ef4444">4.0 C</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 40%; background: #ef4444;"></div></div>
+      </div>
+      <div class="dim-box">
+        <div class="dim-box-top"><span>可维护性 (Maintainability)</span><span style="color: #6366f1">7.0 A</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 70%; background: #6366f1;"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Action Toolbar -->
+  <div class="action-toolbar">
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="searchBox" placeholder="即时过滤缺陷标题、路径、错误类型...">
+    </div>
+    <div class="filter-segmented">
+      <button class="seg-btn active" data-filter="all">全部 (16)</button>
+      <button class="seg-btn" data-filter="crit">致命 (1)</button>
+      <button class="seg-btn" data-filter="high">高危 (3)</button>
+      <button class="seg-btn" data-filter="med">中度 (7)</button>
+      <button class="seg-btn" data-filter="low">其他 (5)</button>
+    </div>
+  </div>
+
+  <!-- Findings Stream -->
+  <div class="findings-stream" id="findingsContainer">
+
+    <!-- Card 1 -->
+    <article class="console-card" data-severity="crit">
+      <div class="card-summary-row" onclick="toggleCard(this)">
+        <div class="card-left">
+          <div class="tag-capsules">
+            <span class="capsule capsule-crit">Critical 致命</span>
+            <span class="capsule capsule-muted">安全与身份验证</span>
+            <span class="capsule capsule-muted">工时: ~15m</span>
+          </div>
+          <div class="item-title">JWT Secret 在容器环境变量缺省时静默回退至静态明文</div>
+          <div class="item-location">src/config/auth.ts:15 · <code>getJwtSecret()</code></div>
+        </div>
+        <div>
+          <span style="font-size: 0.85rem; color: var(--accent); font-weight: 600;">展开详情 ▾</span>
+        </div>
+      </div>
+
+      <div class="card-expanded-content">
+        <div class="tabs-nav">
+          <span class="tab-link active">缺陷危害分析</span>
+          <span class="tab-link">修复方案 (Diff)</span>
+          <span class="tab-link">回归测试设计</span>
+        </div>
+
+        <div class="tab-panel">
+          <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+            <strong>攻击路径：</strong> 当生产 K8s ConfigMap 或 Docker 容器因疏忽未注入 <code>JWT_SECRET</code> 时，代码由于回退逻辑不会报错，而是使用默认 <code>'dev-secret...'</code> 运行。攻击者利用该公开密钥可脱机签发伪造的有效 Admin Token。
+          </p>
+          <div class="code-container">
+            <button class="copy-code-chip" onclick="copySnippet(this)">复制</button>
+            <pre><code>// 原始缺陷代码 (File: src/config/auth.ts:15)
+export function getJwtSecret(): string {
+  return process.env.JWT_SECRET || 'dev-secret-do-not-use-in-production';
+}
+
+// 推荐安全防护改造:
+export function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('FATAL: JWT_SECRET environment variable is mandatory!');
+  }
+  return secret;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 2 -->
+    <article class="console-card" data-severity="high">
+      <div class="card-summary-row" onclick="toggleCard(this)">
+        <div class="card-left">
+          <div class="tag-capsules">
+            <span class="capsule capsule-high">High 高危</span>
+            <span class="capsule capsule-muted">并发与死锁</span>
+            <span class="capsule capsule-muted">工时: ~2h</span>
+          </div>
+          <div class="item-title">库存扣减缺乏原子锁保护，导致高并发 TOCTOU 超卖</div>
+          <div class="item-location">src/services/inventory.ts:88 · <code>deductStock()</code></div>
+        </div>
+        <div>
+          <span style="font-size: 0.85rem; color: var(--accent); font-weight: 600;">展开详情 ▾</span>
+        </div>
+      </div>
+      <div class="card-expanded-content" style="display: none;">
+        <div class="tab-panel">
+          <p style="font-size: 0.9rem; color: var(--text-secondary);">
+            应用层先读库存后更新，缺乏原子行锁保护。并发事务下同时读到剩余 1 件，均执行减扣导致负库存。
+          </p>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <footer class="app-footer">
+    <span>Fuck My Shit Mountain · 现代控制台模板方案</span>
+    <span>支持深浅色实时响应 · 交互式实时搜索</span>
+  </footer>
+
+</div>
+
+<script>
+  // 主题切换交互
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    themeToggle.textContent = next === 'dark' ? '🌙' : '☀️';
+  });
+
+  // 折叠卡片交互
+  function toggleCard(row) {
+    const content = row.nextElementSibling;
+    if (content.style.display === 'none') {
+      content.style.display = 'flex';
+      row.querySelector('div:last-child span').textContent = '收起详情 ▴';
+    } else {
+      content.style.display = 'none';
+      row.querySelector('div:last-child span').textContent = '展开详情 ▾';
+    }
+  }
+
+  // 简单复制
+  function copySnippet(btn) {
+    btn.textContent = '已复制!';
+    setTimeout(() => btn.textContent = '复制', 1500);
+  }
+
+  // 即时搜索过滤
+  const searchBox = document.getElementById('searchBox');
+  searchBox.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    document.querySelectorAll('.console-card').forEach(card => {
+      const text = card.textContent.toLowerCase();
+      card.style.display = text.includes(term) ? '' : 'none';
+    });
+  });
+
+  // 分段过滤按钮
+  document.querySelectorAll('.seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      document.querySelectorAll('.console-card').forEach(card => {
+        if (filter === 'all' || card.dataset.severity === filter) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

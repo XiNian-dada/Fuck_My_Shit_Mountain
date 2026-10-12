@@ -46,7 +46,7 @@
 - 🔍 **证据闭环（Evidence-Based）**：每条发现必须具备具体的代码行号、真实触发条件、影响推导与工时预估，拒绝无凭据的主观臆断。
 - 🚦 **真假风险区分**：严格隔离**已确认缺陷**与**待确认风险**，未深入覆盖的区域明确标注为 `Not assessed`，绝不把“未发现”粉饰为满分。
 - ⚡ **增量审计（Incremental Mode）**：支持基于 `git diff` 针对 PR 变更文件展开定向审查，快速嵌入日常代码 Review 与持续交付流。
-- 📊 **专业报告呈现**：支持一键导出交互式单页 **HTML 报告**、自动化流程适用的 **JSON 数据**，以及极简的 **Markdown 文档**。
+- 📊 **专业报告呈现**：支持一键导出交互式单页 **HTML 报告**、自动化流程适用的 **JSON 数据**，以及极简的 **Markdown 文档**。内置**旧版经典**与 **3 款高颜值全新设计**（黑曜极客 Obsidian Cyber、瑞士极简 Swiss Editorial、极光控制台 Aurora Console），生成 HTML 时可由用户指定或让 AI 随机精选！
 
 ---
 
@@ -106,6 +106,7 @@ rm -rf /tmp/shit-mountain
 请使用 fuck-my-shit-mountain 对当前项目进行全量审计。
 报告语言：中文
 输出格式：html
+HTML主题：aurora (可选: classic / obsidian / swiss / aurora / random)
 ```
 
 ---

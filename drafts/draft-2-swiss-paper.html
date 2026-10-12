@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fuck My Shit Mountain — 草稿二：瑞士极简 (Swiss Editorial Paper)</title>
+<style>
+  :root {
+    --bg-page: #f8fafc;
+    --bg-surface: #ffffff;
+    --border-subtle: #e2e8f0;
+    --border-medium: #cbd5e1;
+    --text-heading: #0f172a;
+    --text-body: #334155;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    
+    --accent: #0f172a;
+    --accent-blue: #2563eb;
+    
+    --crit-text: #dc2626;
+    --crit-bg: #fef2f2;
+    --crit-border: #fecaca;
+
+    --high-text: #d97706;
+    --high-bg: #fffbeb;
+    --high-border: #fde68a;
+
+    --med-text: #2563eb;
+    --med-bg: #eff6ff;
+    --med-border: #bfdbfe;
+
+    --success-text: #059669;
+    --success-bg: #ecfdf5;
+    --success-border: #a7f3d0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, "PingFang SC", sans-serif;
+    background: var(--bg-page);
+    color: var(--text-body);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Header */
+  .top-banner {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 1rem 2.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 40;
+  }
+  .doc-meta { display: flex; align-items: center; gap: 1rem; }
+  .doc-seal {
+    font-weight: 800; font-size: 0.9rem; letter-spacing: -0.02em;
+    color: var(--text-heading); border: 2px solid var(--text-heading);
+    padding: 0.15rem 0.5rem; text-transform: uppercase;
+  }
+  .doc-title { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); }
+  .tag-label {
+    background: var(--bg-page); color: var(--text-muted);
+    border: 1px solid var(--border-subtle); padding: 0.2rem 0.6rem;
+    border-radius: 4px; font-size: 0.75rem; font-weight: 500;
+  }
+
+  /* Main Layout Grid */
+  .layout-wrapper {
+    max-width: 1400px; margin: 2.5rem auto 5rem; padding: 0 2rem;
+    display: grid; grid-template-columns: 360px 1fr; gap: 3rem;
+  }
+  @media (max-width: 1024px) {
+    .layout-wrapper { grid-template-columns: 1fr; gap: 2rem; }
+  }
+
+  /* Left Rail: Sticky Dashboard */
+  .left-rail { position: sticky; top: 5rem; height: fit-content; display: flex; flex-direction: column; gap: 1.75rem; }
+
+  .summary-box {
+    background: var(--bg-surface); border: 1px solid var(--border-medium);
+    border-radius: 8px; padding: 1.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .summary-title {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700; color: var(--text-muted); margin-bottom: 0.75rem;
+  }
+  .big-score-display {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle);
+  }
+  .score-number { font-size: 3.5rem; font-weight: 800; line-height: 1; color: var(--text-heading); letter-spacing: -0.04em; }
+  .score-denom { font-size: 1.25rem; color: var(--text-dim); font-weight: 500; }
+  .grade-stamp {
+    font-size: 1.5rem; font-weight: 800; border: 2px solid var(--text-heading);
+    padding: 0.2rem 0.75rem; border-radius: 4px; color: var(--text-heading);
+  }
+
+  /* Dimension Bars */
+  .dimension-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.5rem; }
+  .dimension-table tr { border-bottom: 1px solid var(--border-subtle); }
+  .dimension-table tr:last-child { border-bottom: none; }
+  .dimension-table td { padding: 0.65rem 0; }
+  .dim-label { font-weight: 600; color: var(--text-heading); width: 110px; }
+  .dim-bar-cell { padding-right: 0.75rem; }
+  .mini-bar-track { height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; width: 100%; }
+  .mini-bar-fill { height: 100%; background: var(--text-heading); }
+  .dim-score-val { font-family: ui-monospace, monospace; font-weight: 700; text-align: right; width: 45px; }
+
+  /* Stat Summary Strip */
+  .stat-grid-condensed {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;
+  }
+  .stat-cell {
+    background: var(--bg-surface); border: 1px solid var(--border-subtle);
+    border-radius: 6px; padding: 0.85rem 1rem;
+  }
+  .stat-cell-num { font-size: 1.5rem; font-weight: 800; color: var(--text-heading); line-height: 1.2; }
+  .stat-cell-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+
+  /* Right Content Stream */
+  .content-stream { display: flex; flex-direction: column; gap: 2.5rem; }
+
+  .section-headline {
+    font-size: 1.5rem; font-weight: 800; color: var(--text-heading);
+    letter-spacing: -0.02em; padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--text-heading);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+
+  /* Editorial Finding Item */
+  .editorial-card {
+    background: var(--bg-surface); border: 1px solid var(--border-subtle);
+    border-radius: 8px; padding: 2rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 10px 24px -12px rgba(0,0,0,0.04);
+    display: flex; flex-direction: column; gap: 1.25rem;
+    position: relative;
+  }
+  .card-topline {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 1rem; flex-wrap: wrap;
+  }
+  .pill-group { display: flex; gap: 0.5rem; align-items: center; }
+  .pill {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 0.2rem 0.55rem; border-radius: 4px; border: 1px solid transparent;
+  }
+  .pill-crit { background: var(--crit-bg); color: var(--crit-text); border-color: var(--crit-border); }
+  .pill-high { background: var(--high-bg); color: var(--high-text); border-color: var(--high-border); }
+  .pill-med { background: var(--med-bg); color: var(--med-text); border-color: var(--med-border); }
+  .pill-scope { background: #f1f5f9; color: var(--text-muted); }
+
+  .finding-title-clean {
+    font-size: 1.25rem; font-weight: 700; color: var(--text-heading);
+    letter-spacing: -0.015em; line-height: 1.4;
+  }
+  .file-anchor {
+    font-family: ui-monospace, monospace; font-size: 0.8rem;
+    color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem;
+  }
+
+  .field-desc {
+    font-size: 0.95rem; color: var(--text-body); line-height: 1.7;
+  }
+
+  /* Code Comparison Panels */
+  .diff-box {
+    border: 1px solid var(--border-subtle); border-radius: 6px; overflow: hidden;
+  }
+  .diff-header {
+    background: #f8fafc; border-bottom: 1px solid var(--border-subtle);
+    padding: 0.5rem 1rem; font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.04em;
+    display: flex; justify-content: space-between;
+  }
+  .diff-body {
+    background: #ffffff; padding: 1rem 1.25rem; font-family: ui-monospace, "SF Mono", monospace;
+    font-size: 0.85rem; color: #1e293b; overflow-x: auto; line-height: 1.6;
+  }
+
+  .test-guide-box {
+    background: #f8fafc; border-left: 3px solid var(--text-heading);
+    padding: 1rem 1.25rem; font-size: 0.875rem;
+  }
+  .test-guide-title { font-weight: 700; color: var(--text-heading); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.35rem; }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid var(--border-subtle); padding: 2.5rem 0;
+    text-align: center; font-size: 0.85rem; color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<header class="top-banner">
+  <div class="doc-meta">
+    <div class="doc-seal">AUDIT REPORT</div>
+    <span class="doc-title">NodeLite Core Service (v2.4.0)</span>
+    <span class="tag-label">草稿 2 · 瑞士极简白纸风</span>
+  </div>
+  <div>
+    <span class="tag-label">📅 2026-10-12 · 全量体检</span>
+  </div>
+</header>
+
+<main class="layout-wrapper">
+
+  <!-- Left Sidebar (Health Card & Dimensions) -->
+  <aside class="left-rail">
+
+    <div class="summary-box">
+      <div class="summary-title">工程健康度综合评级</div>
+      <div class="big-score-display">
+        <div>
+          <span class="score-number">6.4</span>
+          <span class="score-denom">/ 10.0</span>
+        </div>
+        <div class="grade-stamp">B</div>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+        代码结构清晰，但认证层存在隐式降级漏洞，核心数据库操作缺少事务边界与超时熔断控制。
+      </p>
+
+      <div class="summary-title" style="margin-top: 1.5rem;">核心维度诊断明细</div>
+      <table class="dimension-table">
+        <tr>
+          <td class="dim-label">安全合规</td>
+          <td class="dim-bar-cell"><div class="mini-bar-track"><div class="mini-bar-fill" style="width: 80%"></div></div></td>
+          <td class="dim-score-val">8.0</td>
+        </tr>
+        <tr>
+          <td class="dim-label">系统稳定</td>
+          <td class="dim-bar-cell"><div class="mini-bar-track"><div class="mini-bar-fill" style="width: 55%"></div></div></td>
+          <td class="dim-score-val">5.5</td>
+        </tr>
+        <tr>
+          <td class="dim-label">并发安全</td>
+          <td class="dim-bar-cell"><div class="mini-bar-track"><div class="mini-bar-fill" style="width: 45%"></div></div></td>
+          <td class="dim-score-val">4.5</td>
+        </tr>
+        <tr>
+          <td class="dim-label">性能吞吐</td>
+          <td class="dim-bar-cell"><div class="mini-bar-track"><div class="mini-bar-fill" style="width: 95%"></div></div></td>
+          <td class="dim-score-val">9.5</td>
+        </tr>
+        <tr>
+          <td class="dim-label">测试真实度</td>
+          <td class="dim-bar-cell"><div class="mini-bar-track"><div class="mini-bar-fill" style="width: 40%"></div></div></td>
+          <td class="dim-score-val">4.0</td>
+        </tr>
+        <tr>
+          <td class="dim-label">可维护性</td>
+          <td class="dim-bar-cell"><div class="mini-bar-track"><div class="mini-bar-fill" style="width: 70%"></div></div></td>
+          <td class="dim-score-val">7.0</td>
+        </tr>
+        <tr>
+          <td class="dim-label">发布就绪</td>
+          <td class="dim-bar-cell"><div class="mini-bar-track"><div class="mini-bar-fill" style="width: 75%"></div></div></td>
+          <td class="dim-score-val">7.5</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stat-grid-condensed">
+      <div class="stat-cell">
+        <div class="stat-cell-num" style="color: var(--crit-text)">1</div>
+        <div class="stat-cell-label">Critical 致命隐患</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-cell-num" style="color: var(--high-text)">3</div>
+        <div class="stat-cell-label">High 高危风险</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-cell-num" style="color: var(--med-text)">7</div>
+        <div class="stat-cell-label">Medium 待改善</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-cell-num">16</div>
+        <div class="stat-cell-label">发现项总数</div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- Right Content Flow -->
+  <section class="content-stream">
+
+    <div>
+      <div class="section-headline">
+        <span>重点缺陷审查条目</span>
+        <span style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted);">按影响度排定优先级</span>
+      </div>
+    </div>
+
+    <!-- Finding 1 -->
+    <article class="editorial-card">
+      <div class="card-topline">
+        <div class="pill-group">
+          <span class="pill pill-crit">Critical 致命</span>
+          <span class="pill pill-scope">安全与鉴权</span>
+          <span class="pill pill-scope">修复工时: ~15m</span>
+        </div>
+        <span style="font-size: 0.8rem; font-weight: 600; color: var(--success-text);">● 已确认证据</span>
+      </div>
+
+      <h2 class="finding-title-clean">
+        JWT Secret 在环境变量未设定时回退为硬编码常量，引发全站身份伪造
+      </h2>
+      <div class="file-anchor">
+        📁 <code>src/config/auth.ts:15</code> · 方法: <code>getJwtSecret()</code>
+      </div>
+
+      <p class="field-desc">
+        <strong>问题剖析：</strong> 函数内部使用或操作符 (<code>||</code>) 设定了 fallback 默认密钥。在容器部署或云原生环境因环境变量注入延迟时，服务将使用静态字符串签发与验签。攻击者可脱机伪造任意声明（包括超级管理员权限）的合法 Token，完全穿透鉴权系统。
+      </p>
+
+      <div class="diff-box">
+        <div class="diff-header">
+          <span>推荐最小修复实施方案</span>
+          <span>TypeScript</span>
+        </div>
+        <pre class="diff-body"><code>export function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('FATAL: JWT_SECRET 必须在环境变量中明确配置，禁止静默回退。');
+  }
+  return secret;
+}</code></pre>
+      </div>
+
+      <div class="test-guide-box">
+        <div class="test-guide-title">建议回归测试用例 (Regression Test)</div>
+        <div>编写单元测试：在未设定 <code>process.env.JWT_SECRET</code> 的情况下调用 <code>getJwtSecret()</code>，断言其必须抛出致命启动异常并阻止服务监听。</div>
+      </div>
+    </article>
+
+    <!-- Finding 2 -->
+    <article class="editorial-card">
+      <div class="card-topline">
+        <div class="pill-group">
+          <span class="pill pill-high">High 高危</span>
+          <span class="pill pill-scope">并发控制</span>
+          <span class="pill pill-scope">修复工时: ~2h</span>
+        </div>
+        <span style="font-size: 0.8rem; font-weight: 600; color: var(--success-text);">● 已确认证据</span>
+      </div>
+
+      <h2 class="finding-title-clean">
+        库存扣减未处于行级锁保护下，引发 TOCTOU 竞态超卖
+      </h2>
+      <div class="file-anchor">
+        📁 <code>src/services/inventory.ts:88</code> · 方法: <code>deductStock()</code>
+      </div>
+
+      <p class="field-desc">
+        <strong>问题剖析：</strong> 查询库存与写入扣减分为两条独立的无锁 SQL。高并发压测场景下两个请求同时读取到相同的库存数，导致商品库存被扣成负数。
+      </p>
+
+      <div class="diff-box">
+        <div class="diff-header">
+          <span>推荐原子更新修复</span>
+          <span>SQL</span>
+        </div>
+        <pre class="diff-body"><code>-- 使用原子条件更新替代应用层先查后改
+UPDATE inventory 
+SET stock = stock - :quantity 
+WHERE product_id = :id AND stock >= :quantity;</code></pre>
+      </div>
+    </article>
+
+  </section>
+
+</main>
+
+<footer class="footer">
+  Fuck My Shit Mountain · 瑞士极简白纸风模板草稿 · 严谨、权威且纯净的工程报告
+</footer>
+
+</body>
+</html>

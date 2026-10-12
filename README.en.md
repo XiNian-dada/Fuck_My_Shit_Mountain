@@ -46,7 +46,7 @@ Fixes create cascade failures ──▶  Minimal targeted remediation diffs + re
 - 🔍 **Evidence-Based Findings**: Every issue requires concrete code citations, execution flow traces, impact analysis, and estimated remediation effort.
 - 🚦 **Confirmed vs. Suspected Separation**: Separates confirmed bugs from architectural risks; unexplored domains are marked `Not assessed` rather than assumed clean.
 - ⚡ **Incremental PR Audits**: Audit only `git diff` changes against `main` or release tags for continuous integration and PR reviews.
-- 📊 **Rich Multi-Format Delivery**: Generate interactive standalone **HTML reports**, machine-readable **JSON schemas** for CI tooling, or clean **Markdown docs**.
+- 📊 **Rich Multi-Format Delivery**: Generate interactive standalone **HTML reports**, machine-readable **JSON schemas** for CI tooling, or clean **Markdown docs**. Features the **classic legacy** design alongside **3 brand-new high-aesthetic themes** (Obsidian Cyber, Swiss Editorial, Aurora Console)—user selectable or randomized by AI!
 
 ---
 
@@ -106,6 +106,7 @@ Reports default to the conversation language and conversational output. File out
 Use fuck-my-shit-mountain to audit this project in full mode.
 Report language: English
 Output format: html
+HTML theme: aurora (options: classic / obsidian / swiss / aurora / random)
 ```
 
 ---

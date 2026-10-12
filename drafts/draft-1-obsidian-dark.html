@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fuck My Shit Mountain — 草稿一：黑曜极客 (Obsidian Cyber)</title>
+<style>
+  :root {
+    --bg-base: #090d16;
+    --bg-surface: #0f172a;
+    --bg-card: rgba(17, 24, 39, 0.75);
+    --bg-card-hover: rgba(30, 41, 59, 0.85);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-highlight: rgba(255, 255, 255, 0.16);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --accent: #38bdf8;
+    --accent-glow: rgba(56, 189, 248, 0.2);
+    --critical: #f43f5e;
+    --critical-glow: rgba(244, 63, 94, 0.25);
+    --high: #fb923c;
+    --high-glow: rgba(251, 146, 60, 0.25);
+    --medium: #38bdf8;
+    --medium-glow: rgba(56, 189, 248, 0.2);
+    --low: #94a3b8;
+    --success: #34d399;
+    --success-glow: rgba(52, 211, 153, 0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "SF Pro Display", sans-serif;
+    background: var(--bg-base);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+    background-image: 
+      radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.08), transparent 40%),
+      radial-gradient(circle at 85% 30%, rgba(244, 63, 94, 0.06), transparent 35%),
+      linear-gradient(to bottom, #090d16, #060910);
+    min-height: 100vh;
+  }
+
+  /* Navigation Bar */
+  .navbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(16px);
+    background: rgba(9, 13, 22, 0.8);
+    border-bottom: 1px solid var(--border);
+    padding: 0.875rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 0.75rem; font-weight: 700; font-size: 1.05rem; }
+  .brand-logo {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: linear-gradient(135deg, #38bdf8, #f43f5e);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 900; color: #fff;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+  }
+  .badge-proto {
+    background: rgba(56, 189, 248, 0.12); color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 2px 8px; border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+  }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-link {
+    color: var(--text-muted); text-decoration: none; font-size: 0.875rem;
+    font-weight: 500; transition: color 0.15s;
+  }
+  .nav-link:hover { color: var(--text-main); }
+
+  /* App Container */
+  .container { max-width: 1360px; margin: 0 auto; padding: 2rem 2rem 5rem; }
+
+  /* Header Section */
+  .hero-header {
+    margin-bottom: 2.5rem; display: flex; justify-content: space-between; align-items: flex-end;
+    flex-wrap: wrap; gap: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);
+  }
+  .title-group h1 {
+    font-size: 2.25rem; font-weight: 800; letter-spacing: -0.03em;
+    background: linear-gradient(to right, #ffffff, #cbd5e1);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .title-meta {
+    display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem;
+    font-size: 0.875rem; color: var(--text-muted);
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border);
+  }
+
+  /* Score Dashboard Grid */
+  .dashboard-grid {
+    display: grid; grid-template-columns: 340px 1fr; gap: 1.5rem; margin-bottom: 2.5rem;
+  }
+  @media (max-width: 960px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+  .overall-card {
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+    border: 1px solid var(--border-highlight);
+    border-radius: 18px; padding: 2rem; position: relative; overflow: hidden;
+    backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .overall-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #38bdf8, #818cf8, #f43f5e);
+  }
+  .score-dial {
+    display: flex; align-items: baseline; gap: 0.75rem; margin: 1.5rem 0 0.5rem;
+  }
+  .score-big { font-size: 4.5rem; font-weight: 900; line-height: 1; letter-spacing: -0.05em; color: #fff; }
+  .score-denom { font-size: 1.5rem; color: var(--text-dim); }
+  .grade-badge-huge {
+    padding: 0.35rem 1rem; border-radius: 10px; font-size: 1.5rem; font-weight: 800;
+    background: rgba(251, 146, 60, 0.15); color: var(--high); border: 1px solid rgba(251, 146, 60, 0.3);
+  }
+  .overall-desc { color: var(--text-muted); font-size: 0.925rem; line-height: 1.5; }
+
+  /* 7 Dimension Sliders */
+  .dimensions-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px;
+    padding: 1.75rem 2rem; backdrop-filter: blur(12px);
+  }
+  .dim-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+  .dim-item { display: grid; grid-template-columns: 140px 1fr 65px; align-items: center; gap: 1rem; }
+  .dim-name { font-size: 0.875rem; font-weight: 600; color: var(--text-main); }
+  .dim-track { height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 999px; overflow: hidden; position: relative; }
+  .dim-fill { height: 100%; border-radius: 999px; transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+  .fill-s { background: linear-gradient(90deg, #10b981, #34d399); }
+  .fill-a { background: linear-gradient(90deg, #0284c7, #38bdf8); }
+  .fill-b { background: linear-gradient(90deg, #d97706, #fbbf24); }
+  .fill-c { background: linear-gradient(90deg, #ea580c, #f97316); }
+  .fill-d { background: linear-gradient(90deg, #e11d48, #f43f5e); }
+  .dim-val { font-family: "SF Mono", monospace; font-size: 0.875rem; font-weight: 700; text-align: right; }
+
+  /* Stat Counter Strip */
+  .stat-strip {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin-bottom: 2.5rem;
+  }
+  .stat-tile {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.35rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .stat-tile:hover { transform: translateY(-2px); border-color: var(--border-highlight); }
+  .stat-num { font-size: 2rem; font-weight: 800; line-height: 1; }
+  .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
+
+  /* Interactive Filter Bar */
+  .filter-bar {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+    gap: 1rem; margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: var(--bg-surface);
+    border: 1px solid var(--border); border-radius: 12px;
+  }
+  .filter-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .filter-btn {
+    background: transparent; border: 1px solid transparent; color: var(--text-muted);
+    padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.825rem; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 0.4rem;
+  }
+  .filter-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+  .filter-btn.active {
+    background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;
+  }
+
+  /* Finding Card */
+  .findings-container { display: flex; flex-direction: column; gap: 1.25rem; }
+  .finding-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+    overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .finding-card:hover {
+    border-color: var(--border-highlight);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  }
+  .finding-card.border-critical { border-left: 4px solid var(--critical); }
+  .finding-card.border-high { border-left: 4px solid var(--high); }
+  .finding-card.border-medium { border-left: 4px solid var(--medium); }
+
+  .finding-header {
+    padding: 1.25rem 1.75rem; display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 1rem; cursor: pointer;
+  }
+  .finding-title-group { flex: 1; }
+  .tag-row { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; }
+  .badge {
+    padding: 0.2rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.02em; text-transform: uppercase;
+  }
+  .badge-crit { background: rgba(244, 63, 94, 0.2); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.4); }
+  .badge-high { background: rgba(251, 146, 60, 0.2); color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.4); }
+  .badge-med { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+  .badge-confirmed { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+
+  .finding-title { font-size: 1.15rem; font-weight: 700; color: #fff; }
+  .finding-loc { font-family: "SF Mono", monospace; font-size: 0.8rem; color: var(--text-dim); margin-top: 0.25rem; }
+
+  .finding-body {
+    padding: 0 1.75rem 1.75rem; border-top: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem; padding-top: 1.25rem;
+  }
+  .info-block { display: flex; flex-direction: column; gap: 0.4rem; }
+  .info-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--text-dim); }
+  .info-content { font-size: 0.925rem; color: var(--text-muted); line-height: 1.6; }
+
+  /* Code Block & Fix */
+  .code-viewer {
+    background: #050811; border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px; padding: 1rem 1.25rem; font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.85rem; color: #cbd5e1; overflow-x: auto; position: relative;
+  }
+  .fix-container {
+    background: rgba(56, 189, 248, 0.04); border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 10px; padding: 1.25rem;
+  }
+  .fix-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .fix-label { font-size: 0.8rem; font-weight: 700; color: #38bdf8; text-transform: uppercase; }
+
+  /* Clean Tag Buttons */
+  .copy-btn {
+    background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border);
+    color: var(--text-muted); padding: 0.25rem 0.6rem; border-radius: 6px;
+    font-size: 0.75rem; cursor: pointer; transition: all 0.15s;
+  }
+  .copy-btn:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+
+  /* Footer */
+  .footer {
+    margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border);
+    text-align: center; color: var(--text-dim); font-size: 0.875rem;
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="brand">
+    <div class="brand-logo">FS</div>
+    <span>Fuck My Shit Mountain</span>
+    <span class="badge-proto">草稿 1 · 黑曜极客 (Obsidian Cyber)</span>
+  </div>
+  <div class="nav-links">
+    <a href="#summary" class="nav-link">概览</a>
+    <a href="#scores" class="nav-link">评分</a>
+    <a href="#findings" class="nav-link">缺陷清单 (16)</a>
+    <a href="#plan" class="nav-link">整改路线</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Header -->
+  <header class="hero-header">
+    <div class="title-group">
+      <h1>PaymentEngine Core API</h1>
+      <div class="title-meta">
+        <span class="chip">📅 2026-10-12</span>
+        <span class="chip">🎯 模式: 全量审计 (Full Mode)</span>
+        <span class="chip">🔍 覆盖度: 26 维度 / 84 文件</span>
+        <span class="chip">⚡ Commit: <code>8a7f4c2</code></span>
+      </div>
+    </div>
+    <div>
+      <span class="chip" style="border-color: rgba(244,63,94,0.3); background: rgba(244,63,94,0.08); color: #f43f5e;">
+        ⚠️ 发现 1 个阻断级安全隐患
+      </span>
+    </div>
+  </header>
+
+  <!-- Dashboard -->
+  <div class="dashboard-grid" id="scores">
+    <div class="overall-card">
+      <div>
+        <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);">
+          代码健康综合指数
+        </div>
+        <div class="score-dial">
+          <span class="score-big">6.4</span>
+          <span class="score-denom">/ 10</span>
+          <span class="grade-badge-huge">B</span>
+        </div>
+      </div>
+      <p class="overall-desc">
+        主干架构分层良好，但支付核心路径存在 <strong>硬编码 Secret 降级</strong> 与 <strong>并发竞态死锁隐患</strong>。在进入生产环境前必须完成 Phase 1 修复。
+      </p>
+    </div>
+
+    <!-- 7 维度进度条 -->
+    <div class="dimensions-card">
+      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.75rem;">
+        核心维度诊断矩阵
+      </div>
+      <div class="dim-list">
+        <div class="dim-item">
+          <span class="dim-name">Security (安全)</span>
+          <div class="dim-track"><div class="dim-fill fill-b" style="width: 80%"></div></div>
+          <span class="dim-val" style="color: #fbbf24">8.0 A</span>
+        </div>
+        <div class="dim-item">
+          <span class="dim-name">Stability (稳定)</span>
+          <div class="dim-track"><div class="dim-fill fill-c" style="width: 55%"></div></div>
+          <span class="dim-val" style="color: #f97316">5.5 B</span>
+        </div>
+        <div class="dim-item">
+          <span class="dim-name">Performance (性能)</span>
+          <div class="dim-track"><div class="dim-fill fill-s" style="width: 95%"></div></div>
+          <span class="dim-val" style="color: #34d399">9.5 S</span>
+        </div>
+        <div class="dim-item">
+          <span class="dim-name">Concurrency (并发)</span>
+          <div class="dim-track"><div class="dim-fill fill-d" style="width: 45%"></div></div>
+          <span class="dim-val" style="color: #f43f5e">4.5 C</span>
+        </div>
+        <div class="dim-item">
+          <span class="dim-name">Testing (测试)</span>
+          <div class="dim-track"><div class="dim-fill fill-d" style="width: 40%"></div></div>
+          <span class="dim-val" style="color: #f43f5e">4.0 C</span>
+        </div>
+        <div class="dim-item">
+          <span class="dim-name">Maintainability (维护)</span>
+          <div class="dim-track"><div class="dim-fill fill-a" style="width: 70%"></div></div>
+          <span class="dim-val" style="color: #38bdf8">7.0 A</span>
+        </div>
+        <div class="dim-item">
+          <span class="dim-name">Release (发布)</span>
+          <div class="dim-track"><div class="dim-fill fill-a" style="width: 75%"></div></div>
+          <span class="dim-val" style="color: #38bdf8">7.5 A</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stat Tiles -->
+  <div class="stat-strip">
+    <div class="stat-tile">
+      <span class="stat-num" style="color: var(--critical)">1</span>
+      <span class="stat-label">Critical 致命缺陷</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-num" style="color: var(--high)">3</span>
+      <span class="stat-label">High 高危风险</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-num" style="color: var(--medium)">7</span>
+      <span class="stat-label">Medium 中度缺陷</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-num" style="color: var(--low)">5</span>
+      <span class="stat-label">Low / Info 改进项</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-num" style="color: var(--success)">100%</span>
+      <span class="stat-label">证据闭环率</span>
+    </div>
+  </div>
+
+  <!-- Findings Filter -->
+  <div class="filter-bar" id="findings">
+    <div class="filter-chips">
+      <button class="filter-btn active">全部 (16)</button>
+      <button class="filter-btn">致命 Critical (1)</button>
+      <button class="filter-btn">高危 High (3)</button>
+      <button class="filter-btn">中危 Medium (7)</button>
+      <button class="filter-btn">低危/提示 (5)</button>
+    </div>
+    <div style="font-size: 0.85rem; color: var(--text-dim);">
+      排序: 严重度降序 (按影响面优先)
+    </div>
+  </div>
+
+  <!-- Detailed Findings -->
+  <div class="findings-container">
+
+    <!-- Card 1 (Critical) -->
+    <article class="finding-card border-critical">
+      <div class="finding-header">
+        <div class="finding-title-group">
+          <div class="tag-row">
+            <span class="badge badge-crit">Critical 致命</span>
+            <span class="badge badge-confirmed">Confirmed 已确认</span>
+            <span class="chip">安全与认证</span>
+            <span class="chip">预估工时: 15m</span>
+          </div>
+          <h2 class="finding-title">JWT Secret 在生产环境变量缺失时静默降级为弱硬编码默认值</h2>
+          <div class="finding-loc">src/config/auth.ts:15 · <code>getJwtSecret()</code></div>
+        </div>
+      </div>
+      <div class="finding-body">
+        <div class="info-block">
+          <div class="info-title">证据链 (Direct Code Evidence)</div>
+          <div class="code-viewer">
+export function getJwtSecret(): string {
+  // 缺陷代码：生产环境未设环境变量时静默吞错并降级为明文字符串
+  return process.env.JWT_SECRET || 'dev-secret-do-not-use-in-production';
+}</div>
+        </div>
+        <div class="info-block">
+          <div class="info-title">现实危害场景 (Realistic Failure Scenario)</div>
+          <div class="info-content">
+            当容器部署时 <code>JWT_SECRET</code> 注入遗漏或配置文件被截断，服务端不会抛出任何异常，而是使用公开的 <code>dev-secret...</code> 进行签名验证。任何攻击者均可脱机伪造任意管理员 Claim 的合法 JWT Token，完全绕过全站鉴权。
+          </div>
+        </div>
+        <div class="fix-container">
+          <div class="fix-header">
+            <span class="fix-label">最小安全修复 (Minimal Targeted Fix)</span>
+            <button class="copy-btn">复制代码</button>
+          </div>
+          <div class="code-viewer">
+export function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('FATAL: JWT_SECRET environment variable is mandatory for security.');
+  }
+  return secret;
+}</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 2 (High) -->
+    <article class="finding-card border-high">
+      <div class="finding-header">
+        <div class="finding-title-group">
+          <div class="tag-row">
+            <span class="badge badge-high">High 高危</span>
+            <span class="badge badge-confirmed">Confirmed 已确认</span>
+            <span class="chip">并发与原子性</span>
+            <span class="chip">预估工时: 2h</span>
+          </div>
+          <h2 class="finding-title">扣减库存操作存在 TOCTOU 竞态条件，高并发下导致超卖</h2>
+          <div class="finding-loc">src/services/inventory.ts:88 · <code>deductStock()</code></div>
+        </div>
+      </div>
+      <div class="finding-body">
+        <div class="info-block">
+          <div class="info-title">现实危害场景 (Realistic Failure Scenario)</div>
+          <div class="info-content">
+            代码先执行 <code>SELECT current_stock FROM items</code>，然后在内存中校验 <code>stock > 0</code>，最后发出 <code>UPDATE items SET stock = stock - 1</code>。两个并发请求在读到相同库存快照后均通过校验，造成真实业务超卖。
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 3 (Medium) -->
+    <article class="finding-card border-medium">
+      <div class="finding-header">
+        <div class="finding-title-group">
+          <div class="tag-row">
+            <span class="badge badge-med">Medium 中危</span>
+            <span class="badge badge-confirmed">Confirmed 已确认</span>
+            <span class="chip">可靠性与降级</span>
+            <span class="chip">预估工时: 45m</span>
+          </div>
+          <h2 class="finding-title">支付回调 Webhook 空 catch 吞没异常，导致订单状态永久挂起</h2>
+          <div class="finding-loc">src/handlers/webhook.ts:42 · <code>handlePaymentWebhook()</code></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <footer class="footer">
+    Fuck My Shit Mountain · 审计草稿设计方案展示 · 样式规范由设计系统驱动
+  </footer>
+
+</div>
+
+</body>
+</html>
