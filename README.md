@@ -199,15 +199,27 @@ Overall         ██████░░░░  6.6  B   主体框架基本成�
 - 本项目已被 [Tool.lu Library](https://tool.lu/library/4y1) 与 [SourcePulse #32479882](https://www.sourcepulse.org/projects/32479882) 目录收录。
 - 技术交流与探讨欢迎访问 [LinuxDo 社区](https://linux.do/)。
 
+
 <p align="center">
-  <a href="https://star-history.com/#XiNian-dada/Fuck_My_Shit_Mountain&Date">
+  <a href="https://www.star-history.com/?repos=XiNian-dada%2FFuck_My_Shit_Mountain&type=date">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=XiNian-dada/Fuck_My_Shit_Mountain&type=Date&theme=dark" />
-      <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=XiNian-dada/Fuck_My_Shit_Mountain&type=Date" />
-      <img alt="Star History Chart" src="https://star-history.dera.page/svg?repos=XiNian-dada/Fuck_My_Shit_Mountain&type=Date" />
+      <source
+        media="(prefers-color-scheme: dark)"
+        srcset="https://api.star-history.com/chart?repos=XiNian-dada/Fuck_My_Shit_Mountain&type=date&theme=dark"
+      />
+      <source
+        media="(prefers-color-scheme: light)"
+        srcset="https://api.star-history.com/chart?repos=XiNian-dada/Fuck_My_Shit_Mountain&type=date"
+      />
+      <img
+        alt="Star History Chart"
+        src="https://api.star-history.com/chart?repos=XiNian-dada/Fuck_My_Shit_Mountain&type=date"
+        width="700"
+      />
     </picture>
   </a>
 </p>
+
 
 ## 开源协议
 
