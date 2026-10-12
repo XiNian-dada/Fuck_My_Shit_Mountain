@@ -1,1422 +1,456 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fuck My Shit Mountain - 演示审计报告</title>
+<title>Fuck My Shit Mountain - 在线演示报告 (Aurora Console)</title>
 <style>
   :root {
-    --sidebar-bg: #1a1f2e;
-    --sidebar-hover: #242a3d;
-    --sidebar-active: #2d3555;
-    --bg: #edf1f7;
-    --bg-accent: #f8fbff;
-    --card-bg: #ffffff;
-    --border: #e5ebf2;
-    --text: #1e2233;
-    --text-secondary: #66708d;
-    --accent: #3370ff;
-    --accent-light: #e8f0ff;
-    --success: #27ae60;
-    --warning: #ff9500;
-    --danger: #ff3b30;
-    --info: #5ac8fa;
-    --demo: #ff6b35;
-    --demo-soft: #fff0e8;
-    --badge-critical: #d63031;
-    --badge-high: #ff9500;
-    --badge-medium: #3370ff;
-    --badge-low: #8e8e93;
-    --badge-info: #5ac8fa;
-    --bar-bg: #e7ebf0;
+    --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+
+  [data-theme="light"] {
+    --bg-page: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-subtle: #f1f5f9;
+    --border: #e2e8f0;
+    --border-hover: #cbd5e1;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --accent: #4f46e5;
+    --accent-light: #e0e7ff;
+    --code-bg: #0f172a;
+    --code-text: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  }
+
+  [data-theme="dark"] {
+    --bg-page: #0b0f19;
+    --bg-surface: #111827;
+    --bg-subtle: #1f2937;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.16);
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+    --accent: #6366f1;
+    --accent-light: rgba(99, 102, 241, 0.15);
+    --code-bg: #030712;
+    --code-text: #e5e7eb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    background:
-      radial-gradient(circle at 20% 10%, rgba(51, 112, 255, 0.09), transparent 28%),
-      radial-gradient(circle at 90% 0%, rgba(255, 107, 53, 0.11), transparent 24%),
-      linear-gradient(180deg, #f7f9fc 0%, var(--bg) 100%);
-    color: var(--text);
-    line-height: 1.75;
-    display: flex;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.55;
+    transition: background-color 0.25s, color 0.25s;
     min-height: 100vh;
-    font-size: 15px;
   }
-  .sidebar {
-    width: 250px;
-    background: var(--sidebar-bg);
-    color: #fff;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-    box-shadow: 0 0 0 1px rgba(255,255,255,.02) inset;
+
+  /* Fixed Demo Theme Navigation */
+  .demo-theme-nav {
+    position: fixed; top: 12px; right: 80px; z-index: 9999;
+    background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 999px;
+    padding: 6px 14px; display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); font-size: 13px;
   }
-  .sidebar-header {
-    padding: 22px 20px 16px;
-    border-bottom: 1px solid rgba(255,255,255,.06);
+  .demo-theme-nav .nav-title { color: #94a3b8; font-weight: 600; margin-right: 4px; }
+  .demo-theme-nav a {
+    color: #e2e8f0; text-decoration: none; padding: 4px 10px; border-radius: 999px;
+    transition: all 0.15s; font-weight: 500;
   }
-  .sidebar-header h1 {
-    font-size: 18px;
-    font-weight: 800;
-    letter-spacing: .3px;
-    line-height: 1.3;
+  .demo-theme-nav a:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+  .demo-theme-nav a.active { background: #6366f1; color: #fff; font-weight: 700; }
+
+  @media (max-width: 900px) {
+    .demo-theme-nav { position: static; margin: 0.5rem 1rem; border-radius: 12px; justify-content: center; }
   }
-  .sidebar-header .sub {
-    font-size: 12px;
-    color: rgba(255,255,255,.44);
-    margin-top: 6px;
+
+  /* Top App Navigation */
+  .app-header {
+    background: var(--bg-surface); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 50; padding: 0.75rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px);
   }
-  .sidebar-nav { padding: 8px 0; flex: 1; }
-  .sidebar-nav a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 18px 12px 20px;
-    color: rgba(255,255,255,.64);
-    text-decoration: none;
-    font-size: 13px;
-    transition: all .15s ease;
-    border-left: 3px solid transparent;
+  .header-left { display: flex; align-items: center; gap: 1rem; }
+  .logo-box {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; color: #fff;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
   }
-  .sidebar-nav a:hover { background: var(--sidebar-hover); color: #fff; }
-  .sidebar-nav a.active { background: var(--sidebar-active); color: #fff; border-left-color: var(--demo); }
-  .sidebar-nav a .icon { width: 18px; text-align: center; font-size: 14px; }
-  .sidebar-footer {
-    padding: 12px 20px;
-    border-top: 1px solid rgba(255,255,255,.06);
-    font-size: 11px;
-    color: rgba(255,255,255,.35);
-    line-height: 1.5;
+  .project-title { font-weight: 700; font-size: 1.05rem; }
+  .status-tag {
+    font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem;
+    border-radius: 999px; background: var(--accent-light); color: var(--accent);
   }
-  .main {
-    flex: 1;
-    min-width: 0;
-    padding: 28px 36px 84px;
+
+  .header-actions { display: flex; align-items: center; gap: 0.75rem; }
+  .icon-btn {
+    background: var(--bg-subtle); border: 1px solid var(--border);
+    color: var(--text-primary); border-radius: 8px; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: var(--transition); font-size: 1.05rem;
   }
+  .icon-btn:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+
+  .app-container { max-width: 1380px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+
+  /* Demo banner */
   .demo-banner {
-    margin-bottom: 18px;
-    padding: 16px 18px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #1e2233, #2f395c 65%, #4d567f);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,.08);
-    box-shadow: 0 18px 40px rgba(30,34,51,.12);
-    position: relative;
-    overflow: hidden;
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(99, 102, 241, 0.1));
+    border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px;
+    padding: 0.85rem 1.25rem; margin-bottom: 2rem;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;
+    font-size: 0.85rem;
   }
-  .demo-banner::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(135deg, rgba(255,255,255,.08) 0 12%, transparent 12% 24%, rgba(255,255,255,.06) 24% 36%, transparent 36% 100%);
-    opacity: .35;
-    pointer-events: none;
+  .demo-badge {
+    background: #ec4899; color: #fff; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;
   }
-  .demo-banner .kicker {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .28em;
-    color: rgba(255,255,255,.62);
-    margin-bottom: 6px;
+
+  /* Hero Metric Section */
+  .kpi-grid {
+    display: grid; grid-template-columns: 320px repeat(3, 1fr); gap: 1.25rem; margin-bottom: 2rem;
   }
-  .demo-banner .headline {
-    font-size: 17px;
-    font-weight: 800;
-    line-height: 1.4;
+  @media (max-width: 1024px) { .kpi-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .kpi-grid { grid-template-columns: 1fr; } }
+
+  .kpi-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem; box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; justify-content: space-between;
+    transition: var(--transition);
   }
-  .demo-banner .body {
-    margin-top: 8px;
-    font-size: 13px;
-    color: rgba(255,255,255,.78);
+  .kpi-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-md); }
+
+  .kpi-card.hero-kpi {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(236, 72, 153, 0.04));
+    border-color: rgba(99, 102, 241, 0.3);
   }
-  .page-header { margin-bottom: 28px; }
-  .page-header h2 {
-    font-size: 28px;
-    font-weight: 800;
-    line-height: 1.2;
+  .kpi-header { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .kpi-val { font-size: 2.75rem; font-weight: 900; line-height: 1.1; margin: 0.5rem 0; letter-spacing: -0.04em; }
+  .kpi-footer { font-size: 0.8rem; color: var(--text-secondary); }
+
+  /* Horizontal Dimension Bar Stack */
+  .dimension-section {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem 2rem; margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
   }
-  .page-header .meta {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-top: 8px;
-    display: flex;
-    gap: 18px;
-    flex-wrap: wrap;
+  .dim-grid-modern {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem 2rem; margin-top: 1rem;
   }
-  .page-header .meta span { display: flex; align-items: center; gap: 4px; }
-  .card {
-    background: var(--card-bg);
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    margin-bottom: 20px;
-    overflow: hidden;
-    box-shadow: 0 12px 32px rgba(31,40,70,.04);
+  .dim-box { display: flex; flex-direction: column; gap: 0.4rem; }
+  .dim-box-top { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; }
+  .dim-slider { height: 7px; background: var(--bg-subtle); border-radius: 999px; overflow: hidden; }
+  .dim-slider-fill { height: 100%; border-radius: 999px; }
+
+  /* Toolbar: Search & Segmented Filter */
+  .action-toolbar {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 0.75rem 1.25rem; margin-bottom: 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-sm);
   }
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 17px 22px;
-    border-bottom: 1px solid var(--border);
-    font-weight: 700;
-    font-size: 15px;
+  .search-wrapper { position: relative; min-width: 280px; }
+  .search-input {
+    width: 100%; background: var(--bg-subtle); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.45rem 0.85rem 0.45rem 2rem;
+    font-size: 0.85rem; color: var(--text-primary); outline: none;
+    transition: var(--transition);
   }
-  .card-body { padding: 22px; }
-  .score-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 12px;
+  .search-input:focus { border-color: var(--accent); background: var(--bg-surface); }
+  .search-icon {
+    position: absolute; left: 0.65rem; top: 50%; transform: translateY(-50%);
+    font-size: 0.85rem; color: var(--text-muted); pointer-events: none;
   }
-  .score-item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 18px 20px;
-    background: #fafcff;
-    border-radius: 12px;
-    border: 1px solid var(--border);
+
+  .filter-segmented { display: flex; background: var(--bg-subtle); border-radius: 8px; padding: 3px; gap: 3px; }
+  .seg-btn {
+    border: none; background: transparent; padding: 0.35rem 0.75rem;
+    font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);
+    border-radius: 6px; cursor: pointer; transition: var(--transition);
   }
-  .score-item .label {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: .5px;
+  .seg-btn:hover { color: var(--text-primary); }
+  .seg-btn.active { background: var(--bg-surface); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+
+  .findings-stream { display: flex; flex-direction: column; gap: 1rem; }
+
+  .console-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);
+    transition: var(--transition);
   }
-  .score-item .bar-row { display: flex; align-items: center; gap: 12px; }
-  .score-item .bar-track {
-    flex: 1;
-    height: 10px;
-    background: var(--bar-bg);
-    border-radius: 999px;
-    overflow: hidden;
+  .console-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-md); }
+
+  .card-summary-row {
+    padding: 1.25rem 1.5rem; display: flex; justify-content: space-between;
+    align-items: center; cursor: pointer; gap: 1rem;
   }
-  .score-item .bar-fill {
-    height: 100%;
-    border-radius: 999px;
-    transition: width .6s ease;
+  .card-left { display: flex; flex-direction: column; gap: 0.35rem; }
+  .tag-capsules { display: flex; gap: 0.5rem; align-items: center; }
+  .capsule {
+    font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.55rem;
+    border-radius: 4px; text-transform: uppercase;
   }
-  .score-item .value {
-    font-size: 22px;
-    font-weight: 800;
-    min-width: 52px;
-    text-align: right;
+  .capsule-crit { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+  .capsule-high { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+  .capsule-med { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+  .capsule-muted { background: var(--bg-subtle); color: var(--text-muted); }
+
+  .item-title { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }
+  .item-location { font-family: ui-monospace, monospace; font-size: 0.8rem; color: var(--text-muted); }
+
+  .card-expanded-content {
+    border-top: 1px solid var(--border); background: var(--bg-subtle);
+    padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;
   }
-  .score-item .grade {
-    font-size: 14px;
-    font-weight: 800;
-    min-width: 24px;
-    text-align: center;
+
+  .code-container {
+    background: var(--code-bg); color: var(--code-text);
+    border-radius: 8px; padding: 1rem 1.25rem; font-family: ui-monospace, monospace;
+    font-size: 0.85rem; overflow-x: auto; position: relative;
   }
-  .bar-fill.s { background: linear-gradient(90deg, #27ae60, #30d158); }
-  .bar-fill.a { background: linear-gradient(90deg, #3370ff, #5e8cff); }
-  .bar-fill.b { background: linear-gradient(90deg, #ff9500, #ffb340); }
-  .bar-fill.c { background: linear-gradient(90deg, #ff3b30, #ff6b61); }
-  .bar-fill.d { background: linear-gradient(90deg, #ff6b61, #ff9f91); }
-  .bar-fill.f { background: linear-gradient(90deg, #9b1d1a, #d63031); }
-  .grade-s { color: #27ae60; } .grade-a { color: #3370ff; }
-  .grade-b { color: #ff9500; } .grade-c { color: #ff3b30; }
-  .grade-d { color: #ff6b61; } .grade-f { color: #9b1d1a; }
-  .overall-row {
-    grid-column: 1 / -1;
-    background: linear-gradient(135deg, #1a1f2e, #2d3555);
-    border-color: transparent;
+  .copy-code-chip {
+    position: absolute; right: 0.75rem; top: 0.75rem;
+    background: rgba(255, 255, 255, 0.1); border: none; color: #fff;
+    padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer;
   }
-  .overall-row .label { color: rgba(255,255,255,.6); }
-  .overall-row .value { color: #fff; }
-  .overall-row .grade { color: #27ae60; }
-  .overall-row .bar-fill { background: linear-gradient(90deg, #27ae60, #30d158); }
-  .stats-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
+
+  .app-footer {
+    margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.85rem; color: var(--text-muted);
   }
-  .stat-card {
-    flex: 1;
-    min-width: 150px;
-    padding: 20px 22px;
-    background: var(--card-bg);
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    text-align: center;
-    box-shadow: 0 12px 32px rgba(31,40,70,.04);
-  }
-  .stat-card .num {
-    font-size: 32px;
-    font-weight: 800;
-    line-height: 1.15;
-  }
-  .stat-card .desc {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 4px;
-  }
-  .finding {
-    border-left: 4px solid var(--border);
-    margin-bottom: 20px;
-    padding: 20px 22px;
-    border-radius: 0 14px 14px 0;
-    background: #fafbfc;
-    border: 1px solid var(--border);
-    border-left-width: 4px;
-  }
-  .finding.severity-critical { border-left-color: var(--badge-critical); }
-  .finding.severity-high { border-left-color: var(--badge-high); }
-  .finding.severity-medium { border-left-color: var(--badge-medium); }
-  .finding.severity-low { border-left-color: var(--badge-low); }
-  .finding.severity-info { border-left-color: var(--badge-info); }
-  .finding-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
-  }
-  .finding-header h4 {
-    font-size: 16px;
-    font-weight: 700;
-    flex: 1;
-    line-height: 1.4;
-  }
-  .badge {
-    display: inline-block;
-    padding: 3px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.6;
-    white-space: nowrap;
-  }
-  .badge-critical { background: #ffeae9; color: var(--badge-critical); }
-  .badge-high { background: #fff3e0; color: var(--badge-high); }
-  .badge-medium { background: var(--accent-light); color: var(--badge-medium); }
-  .badge-low { background: #f2f2f5; color: var(--badge-low); }
-  .badge-info { background: #e4f5ff; color: #007aff; }
-  .badge-confirmed { background: #e8ffe8; color: #248a3d; }
-  .badge-suspected { background: #fff8e1; color: #b8860b; }
-  .finding-meta {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 12px;
-  }
-  .finding-meta span { display: flex; align-items: center; gap: 4px; }
-  .finding .problem {
-    font-size: 14px;
-    margin: 12px 0;
-    color: var(--text);
-    line-height: 1.75;
-  }
-  .finding .evidence {
-    margin: 12px 0;
-    padding: 14px 16px;
-    background: #f0f2f5;
-    border-radius: 10px;
-    font-family: "SF Mono","Fira Code","Consolas",monospace;
-    font-size: 13px;
-    line-height: 1.75;
-    overflow-x: auto;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-  .finding .fix-box {
-    margin-top: 12px;
-    padding: 14px 16px;
-    background: #f0f7ff;
-    border-radius: 10px;
-    border: 1px solid #d6e4ff;
-    font-size: 13px;
-  }
-  .finding .fix-box code {
-    display: block;
-    margin-top: 6px;
-    padding: 12px 14px;
-    background: #1e2233;
-    color: #dbe5ff;
-    border-radius: 8px;
-    font-family: "SF Mono","Fira Code","Consolas",monospace;
-    font-size: 13px;
-    line-height: 1.7;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-  .fix-label {
-    font-weight: 800;
-    font-size: 11px;
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: .35px;
-  }
-  .section-title {
-    font-size: 20px;
-    font-weight: 800;
-    margin: 38px 0 18px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    scroll-margin-top: 18px;
-  }
-  .table-wrap { overflow-x: auto; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-  th {
-    text-align: left;
-    padding: 12px 16px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: .4px;
-    border-bottom: 2px solid var(--border);
-    background: #f8fafc;
-  }
-  td {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
-  tr:last-child td { border-bottom: none; }
-  .check-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 6px;
-  }
-  .check-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 8px 12px;
-    font-size: 14px;
-    line-height: 1.6;
-  }
-  .check-item .check { color: var(--success); font-weight: 800; margin-top: 1px; }
-  .win-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 12px;
-  }
-  .win-card {
-    padding: 16px;
-    background: linear-gradient(135deg, #f0f7ff, #e8f0ff);
-    border-radius: 12px;
-    border: 1px solid #d6e4ff;
-  }
-  .win-card .win-title { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
-  .win-card .win-meta { font-size: 11px; color: var(--text-secondary); }
-  .small { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
-  .demo-footer {
-    text-align: center;
-    padding: 44px 0 12px;
-    color: var(--text-secondary);
-    font-size: 12px;
-    line-height: 1.7;
-  }
-  .demo-footer .stamp {
-    display: inline-block;
-    margin-bottom: 10px;
-    padding: 8px 14px;
-    border-radius: 999px;
-    background: var(--demo-soft);
-    color: #c1440e;
-    border: 1px solid #ffd0bb;
-    font-weight: 800;
-    letter-spacing: .22em;
-    text-transform: uppercase;
-  }
-  .summary-grid {
-    display: grid;
-    grid-template-columns: 1.45fr .85fr;
-    gap: 14px;
-  }
-  .summary-card {
-    padding: 16px 18px;
-    border-radius: 12px;
-    background: #fafcff;
-    border: 1px solid var(--border);
-  }
-  .summary-card h4 {
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: .25em;
-    color: var(--text-secondary);
-    margin-bottom: 10px;
-  }
-  .pill-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 11px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-    background: #f2f5fa;
-    color: #3f4963;
-  }
-  .pill.demo {
-    background: var(--demo-soft);
-    color: #c1440e;
-  }
-  .pill.good {
-    background: #e8ffe8;
-    color: #248a3d;
-  }
-  .pill.warn {
-    background: #fff3e0;
-    color: #b86a00;
-  }
-  .pill.info {
-    background: #e4f5ff;
-    color: #0077aa;
-  }
-  .report-section { scroll-margin-top: 18px; }
-  @media (max-width: 980px) {
-    body { display: block; }
-    .sidebar { width: auto; height: auto; position: relative; }
-    .sidebar-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .main { padding: 16px; }
-    .summary-grid { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 768px) {
-    .sidebar-nav { grid-template-columns: 1fr; }
-    .score-grid { grid-template-columns: 1fr; }
-    .stats-row { flex-direction: column; }
-    .check-list { grid-template-columns: 1fr; }
-    .win-grid { grid-template-columns: 1fr; }
-  }
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #c1c7d0; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #a8adb8; }
 </style>
 </head>
 <body>
 
-<nav class="sidebar">
-  <div class="sidebar-header">
-    <h1>FMSM 演示</h1>
-    <div class="sub">虚构报告 · 2026-06-04</div>
-  </div>
-  <div class="sidebar-nav">
-    <a href="#summary"><span class="icon">📊</span> 评分面板</a>
-    <a href="#executive-summary"><span class="icon">📝</span> 总体评估</a>
-    <a href="#top-risks"><span class="icon">⚠️</span> 首要风险</a>
-    <a href="#findings"><span class="icon">🔍</span> 详细发现</a>
-    <a href="#architecture"><span class="icon">🏗</span> 架构</a>
-    <a href="#security"><span class="icon">🔒</span> 安全</a>
-    <a href="#stability"><span class="icon">⚡</span> 稳定性</a>
-    <a href="#performance"><span class="icon">🚀</span> 性能</a>
-    <a href="#testing"><span class="icon">🧪</span> 测试</a>
-    <a href="#maintainability"><span class="icon">📐</span> 可维护性</a>
-    <a href="#design"><span class="icon">🎨</span> 设计</a>
-    <a href="#release"><span class="icon">📦</span> 发布</a>
-    <a href="#documentation"><span class="icon">📖</span> 文档</a>
-    <a href="#configuration"><span class="icon">⚙️</span> 配置</a>
-    <a href="#observability"><span class="icon">📡</span> 可观测性</a>
-    <a href="#fallback"><span class="icon">🛡️</span> 兜底</a>
-    <a href="#testing-authenticity"><span class="icon">🎯</span> 测试真实性</a>
-    <a href="#type-safety"><span class="icon">🔤</span> 类型安全</a>
-    <a href="#backend-api"><span class="icon">🌐</span> 后端 API</a>
-    <a href="#dependency-weight"><span class="icon">🏋️</span> 依赖重量</a>
-    <a href="#code-consistency"><span class="icon">📏</span> 代码一致性</a>
-    <a href="#comment-coverage"><span class="icon">💬</span> 注释覆盖</a>
-    <a href="#principles"><span class="icon">📋</span> 设计原则</a>
-    <a href="#fix-order"><span class="icon">🎯</span> 修复优先级</a>
-  </div>
-  <div class="sidebar-footer">仅供演示，不对应任何真实仓库审计。</div>
-</nav>
+<div class="demo-theme-nav">
+  <span class="nav-title">🎨 体验不同模板:</span>
+  <a href="index.html" class="active">极光控制台 (默认)</a>
+  <a href="obsidian.html">黑曜极客 (新版)</a>
+  <a href="swiss.html">瑞士极简 (新版)</a>
+  <a href="classic.html">经典旧版</a>
+</div>
 
-<div class="main">
+<header class="app-header">
+  <div class="header-left">
+    <div class="logo-box">FS</div>
+    <span class="project-title">PaymentCore Engine v2.4.0</span>
+    <span class="status-tag">在线全量演示报告</span>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" id="themeToggle" title="切换暗黑/日间模式">🌙</button>
+  </div>
+</header>
+
+<div class="app-container">
+
   <div class="demo-banner">
-    <div class="kicker">演示 / 虚构 / 非真实审计</div>
-    <div class="headline">这是一份用于展示模板与 Pages 发布效果的合成审查报告</div>
-    <div class="body">所有分数、发现、证据和修复建议均为演示数据，不代表任何真实项目的实际质量。</div>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <span class="demo-badge">DEMO / 演示</span>
+      <span>这是一份在线演示报告，采用全新设计的极光控制台 (Aurora Console) 风格呈现。</span>
+    </div>
+    <span style="color: var(--text-muted);">点击右上角胶囊可体验黑曜极客、瑞士极简及经典旧版</span>
   </div>
 
-  <div class="page-header" id="summary">
-    <h2 id="report-title"></h2>
-    <div class="meta" id="report-meta"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">📊 评分面板</div>
-    <div class="card-body">
-      <div class="score-grid" id="score-grid"></div>
+  <div class="kpi-grid">
+    <div class="kpi-card hero-kpi">
+      <div class="kpi-header">综合质量评分 (Overall Score)</div>
+      <div class="kpi-val" style="color: var(--accent);">6.4 <span style="font-size: 1.25rem; font-weight: 600;">/ 10</span></div>
+      <div class="kpi-footer">评级 <strong>Grade B</strong> · 发现 1 项高危阻塞风险</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-header">Critical 致命问题</div>
+      <div class="kpi-val" style="color: #ef4444;">1</div>
+      <div class="kpi-footer">生产鉴权降级隐患 (需立项修复)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-header">High 高危风险</div>
+      <div class="kpi-val" style="color: #f59e0b;">3</div>
+      <div class="kpi-footer">TOCTOU 竞态超卖 & 网关超时崩溃</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-header">已闭环审查维度</div>
+      <div class="kpi-val" style="color: #10b981;">26 / 26</div>
+      <div class="kpi-footer">覆盖全量架构、安全、并发与稳定性</div>
     </div>
   </div>
 
-  <div class="section-title" id="executive-summary">📝 总体评估</div>
-  <div class="card">
-    <div class="card-header">📋 项目总评</div>
-    <div class="card-body">
-      <div class="summary-grid">
-        <div class="summary-card" id="summary-copy"></div>
-        <div class="summary-card">
-          <h4>演示标记</h4>
-          <div class="pill-row" id="summary-pills"></div>
+  <section class="dimension-section">
+    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+      <h3 style="font-size: 1rem; font-weight: 700;">核心维度诊断总览</h3>
+      <span style="font-size: 0.8rem; color: var(--text-muted);">基于客观工程证据，非主观推断</span>
+    </div>
+    <div class="dim-grid-modern">
+      <div class="dim-box">
+        <div class="dim-box-top"><span>安全合规 (Security)</span><span style="color: #f59e0b">8.0 A</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 80%; background: #f59e0b;"></div></div>
+      </div>
+      <div class="dim-box">
+        <div class="dim-box-top"><span>可靠稳定 (Stability)</span><span style="color: #f59e0b">5.5 B</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 55%; background: #f59e0b;"></div></div>
+      </div>
+      <div class="dim-box">
+        <div class="dim-box-top"><span>并发安全 (Concurrency)</span><span style="color: #ef4444">4.5 C</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 45%; background: #ef4444;"></div></div>
+      </div>
+      <div class="dim-box">
+        <div class="dim-box-top"><span>性能响应 (Performance)</span><span style="color: #10b981">9.5 S</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 95%; background: #10b981;"></div></div>
+      </div>
+      <div class="dim-box">
+        <div class="dim-box-top"><span>测试真实度 (Testing)</span><span style="color: #ef4444">4.0 C</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 40%; background: #ef4444;"></div></div>
+      </div>
+      <div class="dim-box">
+        <div class="dim-box-top"><span>可维护性 (Maintainability)</span><span style="color: #6366f1">7.0 A</span></div>
+        <div class="dim-slider"><div class="dim-slider-fill" style="width: 70%; background: #6366f1;"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="action-toolbar">
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="searchBox" placeholder="即时过滤缺陷标题、路径、错误类型...">
+    </div>
+    <div class="filter-segmented">
+      <button class="seg-btn active" data-filter="all">全部 (16)</button>
+      <button class="seg-btn" data-filter="crit">致命 (1)</button>
+      <button class="seg-btn" data-filter="high">高危 (3)</button>
+      <button class="seg-btn" data-filter="med">中度 (7)</button>
+      <button class="seg-btn" data-filter="low">其他 (5)</button>
+    </div>
+  </div>
+
+  <div class="findings-stream" id="findingsContainer">
+    <article class="console-card" data-severity="crit">
+      <div class="card-summary-row" onclick="toggleCard(this)">
+        <div class="card-left">
+          <div class="tag-capsules">
+            <span class="capsule capsule-crit">Critical 致命</span>
+            <span class="capsule capsule-muted">安全与身份验证</span>
+            <span class="capsule capsule-muted">工时: ~15m</span>
+          </div>
+          <div class="item-title">JWT Secret 在容器环境变量缺省时静默回退至静态明文</div>
+          <div class="item-location">src/config/auth.ts:15 · <code>getJwtSecret()</code></div>
+        </div>
+        <div>
+          <span style="font-size: 0.85rem; color: var(--accent); font-weight: 600;">收起详情 ▴</span>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="stats-row" id="stats-row"></div>
+      <div class="card-expanded-content">
+        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+          <strong>攻击路径：</strong> 当生产 K8s ConfigMap 或 Docker 容器因疏忽未注入 <code>JWT_SECRET</code> 时，代码由于回退逻辑不会报错，而是使用默认 <code>'dev-secret...'</code> 运行。攻击者利用该公开密钥可脱机签发伪造的有效 Admin Token。
+        </p>
+        <div class="code-container">
+          <button class="copy-code-chip" onclick="copySnippet(this)">复制</button>
+          <pre><code>// 原始缺陷代码 (File: src/config/auth.ts:15)
+export function getJwtSecret(): string {
+  return process.env.JWT_SECRET || 'dev-secret-do-not-use-in-production';
+}
 
-  <div class="section-title" id="top-risks">⚠️ 首要风险</div>
-  <div class="card">
-    <div class="card-body" style="padding:0">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:60px">#</th>
-              <th>发现项</th>
-              <th style="width:110px">严重程度</th>
-              <th style="width:110px">类别</th>
-            </tr>
-          </thead>
-          <tbody id="top-risks-body"></tbody>
-        </table>
+// 推荐安全防护改造:
+export function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('FATAL: JWT_SECRET environment variable is mandatory!');
+  }
+  return secret;
+}</code></pre>
+        </div>
       </div>
-    </div>
-  </div>
+    </article>
 
-  <div class="section-title" id="findings">🔍 详细发现</div>
-  <div id="findings-list"></div>
-
-  <div id="section-groups"></div>
-
-  <div class="section-title" id="principles">📋 设计原则遵守</div>
-  <div class="card">
-    <div class="card-header">违反项</div>
-    <div class="card-body" style="padding:0">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>原则</th>
-              <th style="width:80px">次数</th>
-              <th style="width:110px">严重程度</th>
-              <th>影响范围</th>
-            </tr>
-          </thead>
-          <tbody id="principles-violated"></tbody>
-        </table>
+    <article class="console-card" data-severity="high">
+      <div class="card-summary-row" onclick="toggleCard(this)">
+        <div class="card-left">
+          <div class="tag-capsules">
+            <span class="capsule capsule-high">High 高危</span>
+            <span class="capsule capsule-muted">并发与死锁</span>
+            <span class="capsule capsule-muted">工时: ~2h</span>
+          </div>
+          <div class="item-title">库存扣减缺乏原子锁保护，导致高并发 TOCTOU 超卖</div>
+          <div class="item-location">src/services/inventory.ts:88 · <code>deductStock()</code></div>
+        </div>
+        <div>
+          <span style="font-size: 0.85rem; color: var(--accent); font-weight: 600;">展开详情 ▾</span>
+        </div>
       </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header">✅ 被遵守的原则</div>
-    <div class="card-body">
-      <div class="check-list" id="principles-respected"></div>
-    </div>
+      <div class="card-expanded-content" style="display: none;">
+        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+          应用层先读库存后更新，缺乏原子行锁保护。并发事务下同时读到剩余 1 件，均执行减扣导致负库存。
+        </p>
+      </div>
+    </article>
   </div>
 
-  <div class="section-title" id="fix-order">🎯 推荐修复顺序</div>
-  <div id="fix-order-root"></div>
+  <footer class="app-footer">
+    <span>Fuck My Shit Mountain · GitHub Pages 在线演示</span>
+    <span>支持深浅色实时响应 · 交互式实时搜索</span>
+  </footer>
 
-  <div class="section-title">⚡ 快速致胜</div>
-  <div class="win-grid" id="quick-wins"></div>
-
-  <div class="demo-footer">
-    <div class="stamp">演示 / 虚构 / 非真实审计</div><br>
-    由 Fuck My Shit Mountain 模板生成的合成演示页 · 2026-06-04
-  </div>
 </div>
 
 <script>
-  const report = {
-    project: 'AsterFlow 演示服务',
-    mode: '全量审计 / 演示数据',
-    date: '2026-06-04',
-    reviewer: 'Claude 5（合成）',
-    scores: [
-      { label: '安全', score: 8.6, note: '令牌处理已经足够稳健，只剩一个很窄的时钟偏移边界。' },
-      { label: '稳定性', score: 7.1, note: '关闭流程很干净，但有一条重试循环还需要断路器。' },
-      { label: '性能', score: 8.0, note: '缓存和批处理做得不错，但摘要重复计算仍然浪费。' },
-      { label: '测试', score: 6.4, note: '集成覆盖看起来靠谱，但还缺少 fuzz 测试。' },
-      { label: '可维护性', score: 6.8, note: '边界大体清楚，但有一个 orchestrator 文件仍然过于臃肿。' },
-      { label: '设计', score: 7.3, note: '依赖倒置整体健康，但不同传输层的错误封装还不一致。' },
-      { label: '发布', score: 7.0, note: 'CI 已经存在，但回滚说明和产物溯源仍需加固。' }
-    ],
-    summary: [
-      '这是一份明确标记为演示的合成审查报告，不对应任何真实仓库。页面只用于演示本项目的报告模板、信息密度和 GitHub Pages 展示效果。',
-      '我们把一个假想的 AsterFlow 服务当作被审查对象，故意混入几条看起来合理的中低风险问题，以模拟一份完整的工程审查结果。',
-      '阅读方式与真实审查一致，但结论不具备事实依据。不要把任何分数、证据或修复建议理解为真实质量评估。'
-    ],
-    pills: [
-      { text: '合成发现', kind: 'demo' },
-      { text: '19 章模板', kind: 'info' },
-      { text: 'GitHub Pages 就绪', kind: 'good' },
-      { text: '未审查真实代码', kind: 'warn' }
-    ],
-    stats: {
-      total: 12,
-      critical: 0,
-      high: 1,
-      medium: 5,
-      low: 5,
-      info: 1,
-      confirmed: 10,
-      suspected: 2
-    },
-    topRisks: [
-      { title: '特性开关获取失败后，生产环境可能切换到模拟数据', severity: 'High', category: '兜底' },
-      { title: 'Redis 故障期间，重试循环缺少断路器', severity: 'Medium', category: '稳定性' },
-      { title: '会话 cookie 刷新使用固定的 5 分钟漂移窗口', severity: 'Medium', category: '安全' },
-      { title: '解析器 harness 缺少畸形 manifest 的 fuzz 用例', severity: 'Medium', category: '测试' },
-      { title: 'orchestrator.ts 同时混杂路由、缓存失效和序列化', severity: 'Medium', category: '可维护性' },
-      { title: '摘要端点每次请求都会重建审计摘要', severity: 'Low', category: '性能' },
-      { title: 'REST 和 WebSocket 的错误封装字段名不一致', severity: 'Low', category: '后端 API' },
-      { title: '公共辅助函数缺少契约注释', severity: 'Low', category: '注释覆盖' },
-      { title: 'camelCase 和 snake_case JSON 键同时暴露', severity: 'Low', category: '代码一致性' },
-      { title: 'lodash 和 lodash-es 被同时打包，只为了一个单行辅助函数', severity: 'Info', category: '依赖重量' }
-    ],
-    findings: [
-      {
-        section: 'security',
-        title: '会话 cookie 刷新使用固定的 5 分钟漂移窗口',
-        severity: 'Medium',
-        status: 'Confirmed',
-        category: '认证',
-        location: 'src/auth/session.ts',
-        target: 'cookie 刷新流程',
-        problem: '刷新路径假设客户端始终处在硬编码的 5 分钟偏移窗口内。时钟偏移的移动端客户端在登录后可能在有效和无效状态之间来回跳转。',
-        evidence: `// auth/session.ts
-const MAX_DRIFT_MINUTES = 5;
-if (skew_minutes > MAX_DRIFT_MINUTES) {
-  return Err(AuthError::InvalidSession);
-}`,
-        fix: `把漂移容忍度改成配置项，并在超过阈值时输出定向告警。
-默认窗口可以保守，但必须显式且可测试。`,
-        effort: '20 分钟',
-        test: '模拟 7 分钟的客户端时钟偏移，并断言认证流程会给出清晰错误和遥测。'
-      },
-      {
-        section: 'stability',
-        title: 'Redis 故障期间，重试循环缺少断路器',
-        severity: 'Medium',
-        status: 'Confirmed',
-        category: '队列',
-        location: 'src/worker/retry.ts',
-        target: '任务派发重试循环',
-        problem: '工作器会指数退避地无限重试，但持续的 Redis 故障仍然会把队列保持在高热状态。这会制造一种缓慢恶化的故障，而不是干净的快速失败边界。',
-        evidence: `// retry.ts
-for (;;) {
-  try {
-    await enqueue(job);
-    break;
-  } catch (error) {
-    await sleep(backoff.next());
-  }
-}`,
-        fix: `添加一个在多次失败后打开的断路器，并记录清晰的恢复路径。
-队列后端不可用超过配置阈值时要快速失败。`,
-        effort: '45 分钟',
-        test: '让 Redis 持续失败 30 秒，验证断路器会打开，并在恢复后关闭。'
-      },
-      {
-        section: 'performance',
-        title: '摘要端点每次请求都会重建审计摘要',
-        severity: 'Low',
-        status: 'Confirmed',
-        category: '热点路径',
-        location: 'src/http/summary.ts',
-        target: 'GET /api/summary',
-        problem: '摘要端点即使在底层快照没有变化时也会重新计算 digest。对于演示负载来说这可以接受，但在突发流量下就是浪费 CPU。',
-        evidence: `// summary.ts
-const digest = buildDigest(await loadSnapshot());
-return json(digest);`,
-        fix: `按快照版本缓存 digest，并在版本变化前复用它。
-失效条件应当绑定版本计数器，而不是墙上时钟。`,
-        effort: '30 分钟',
-        test: '在不更改快照的情况下连续调用两次端点，并断言第二次命中缓存。'
-      },
-      {
-        section: 'testing',
-        title: '解析器 harness 缺少畸形 manifest 的 fuzz 用例',
-        severity: 'Medium',
-        status: 'Suspected',
-        category: '覆盖缺口',
-        location: 'tests/parser_harness.rs',
-        target: 'manifest 解析器',
-        problem: '解析器有结构化单测，但畸形输入边界仍然只靠人工挑选的用例覆盖。这会让 panic 或静默数据损坏更容易漏出去。',
-        evidence: `// tests/parser_harness.rs
-#[test]
-fn parses_known_good_manifest() {
-  let manifest = Manifest::from_bytes(EXAMPLE_MANIFEST).unwrap();
-  assert_eq!(manifest.version, 3);
-}`,
-        fix: `为 manifest 解析添加一个 fuzz 目标，并用少量有效 fixture 作为种子。
-保持 harness 足够小，并在 CI 中以短预算运行。`,
-        effort: '2 小时',
-        test: '对解析器运行 10 万次 fuzz 迭代，并验证不会出现 panic 或未定义状态。'
-      },
-      {
-        section: 'maintainability',
-        title: 'orchestrator.ts 同时混杂路由、缓存失效和序列化',
-        severity: 'Medium',
-        status: 'Confirmed',
-        category: '边界漂移',
-        location: 'src/core/orchestrator.ts',
-        target: '请求编排层',
-        problem: '一个文件同时负责路由决策、缓存失效、响应序列化和错误翻译。这会让局部推理更难，也会让简单改动跨越多个职责。',
-        evidence: `// orchestrator.ts
-export function handleRequest(req) {
-  const route = pickRoute(req);
-  invalidateCache(route);
-  const payload = serialize(runRoute(route));
-  return translateErrors(payload);
-}`,
-        fix: `把编排逻辑拆成路由选择、缓存策略、序列化和错误翻译模块。
-公共入口保持窄而单调。`,
-        effort: '4 小时',
-        test: '一次只重构一条路由，并验证公开响应 payload 保持不变。'
-      },
-      {
-        section: 'release',
-        title: '发布检查单里缺少回滚说明',
-        severity: 'Low',
-        status: 'Confirmed',
-        category: '运维',
-        location: 'release/checklist.md',
-        target: '发布流程',
-        problem: '发布检查单覆盖了构建和发布步骤，但没有说明如何回滚坏版本，也没有说明如何验证上一个版本。这会拖慢事故响应，并放大发布焦虑。',
-        evidence: `# release/checklist.md
-- build artifacts
-- sign packages
-- publish notes
-- deploy to production`,
-        fix: `在发布检查单里增加回滚章节，明确恢复命令和验证步骤。
-把它从检查单里直接链接出来，避免操作者四处查找。`,
-        effort: '15 分钟',
-        test: '假装发布了一个坏版本，并验证检查单能直接给出清晰的回滚路径。'
-      },
-      {
-        section: 'fallback',
-        title: '特性开关获取失败后，生产环境可能切换到模拟数据',
-        severity: 'High',
-        status: 'Confirmed',
-        category: '静默兜底',
-        location: 'src/flags/index.ts',
-        target: '特性开关引导',
-        problem: '当特性开关服务超时，应用会静默切换到本地模拟数据。在生产环境里，这会掩盖真实故障，并制造一种误导性的绿色状态。',
-        evidence: `// flags/index.ts
-const flags = await fetchFlags().catch(() => loadMockFlags());
-return flags;`,
-        fix: `把静默兜底改成生产环境快速失败，并把模拟开关只保留给测试和本地开发。
-如果必须临时兜底，也要输出明显告警和明确的健康信号。`,
-        effort: '30 分钟',
-        test: '在生产模式下强制特性开关服务超时，并断言应用会大声失败，而不是继续使用模拟数据。'
-      },
-      {
-        section: 'backend-api',
-        title: 'REST 和 WebSocket 的错误封装字段名不一致',
-        severity: 'Low',
-        status: 'Confirmed',
-        category: 'API 一致性',
-        location: 'src/api/errors.rs',
-        target: '错误序列化',
-        problem: 'HTTP API 返回 `message`，而 WebSocket 通道返回 `error_message`。这个差异看起来很小，但会逼着消费者为同一个概念维护两条解码路径。',
-        evidence: `// http
-{ "message": "invalid token" }
-// websocket
-{ "error_message": "invalid token" }`,
-        fix: `统一一套错误封装，并在两个传输层复用。
-如果需要保留传输层元数据，就把它放在外层包装里。`,
-        effort: '1 小时',
-        test: '断言相同故障在 HTTP 和 WebSocket 中会产生同一语义 payload。'
-      },
-      {
-        section: 'dependency-weight',
-        title: 'lodash 和 lodash-es 被同时打包，只为了一个单行辅助函数',
-        severity: 'Info',
-        status: 'Confirmed',
-        category: '重复依赖',
-        location: 'package.json',
-        target: '通用辅助函数',
-        problem: '同一个工具库出现了两个变体，但实际上只用到了一个辅助函数。这虽然不是阻断问题，但会增加不必要的依赖重量，也会让审查更嘈杂。',
-        evidence: `// package.json
-"dependencies": {
-  "lodash": "^4.17.21",
-  "lodash-es": "^4.17.21"
-}`,
-        fix: `只保留一种实现风格，并移除另一个包。
-如果只用了一个辅助函数，直接内联即可，不必保留库依赖。`,
-        effort: '15 分钟',
-        test: '移除重复依赖后执行生产构建，并确认包体积保持稳定或变小。'
-      },
-      {
-        section: 'code-consistency',
-        title: 'camelCase 和 snake_case JSON 键同时暴露',
-        severity: 'Low',
-        status: 'Confirmed',
-        category: '命名',
-        location: 'src/api/contracts.ts',
-        target: '公共 JSON 契约',
-        problem: '有些 JSON payload 暴露 `createdAt`，另一些则暴露 `created_at`。这个漂移虽然不大，但会让每个客户端接入都变成一次归一化问题。',
-        evidence: `// contracts.ts
-export const userJson = { createdAt: '...', created_at: '...' };`,
-        fix: `统一一套 JSON 命名约定，只有在必须兼容旧客户端时才在边缘转换。`,
-        effort: '30 分钟',
-        test: '对 JSON payload 做快照，并验证每个公开响应都使用同一种键风格。'
-      },
-      {
-        section: 'comment-coverage',
-        title: '公共辅助函数缺少契约注释',
-        severity: 'Low',
-        status: 'Confirmed',
-        category: '文档',
-        location: 'src/utils/public_helpers.ts',
-        target: '公共辅助函数面',
-        problem: '公共辅助函数虽然很小，但它们仍然定义了其他模块依赖的契约。没有注释时，消费者只能从实现里猜前置条件和返回语义。',
-        evidence: `// public_helpers.ts
-export function normalizeInput(value) {
-  return value.trim().toLowerCase();
-}`,
-        fix: `为每个导出的辅助函数补上一行契约注释，说明输入、输出和任何归一化规则。`,
-        effort: '20 分钟',
-        test: '运行文档构建，并验证导出的辅助函数会出现在生成的 API 页面里。'
-      },
-      {
-        section: 'type-safety',
-        title: '解析器用 as unknown as 强制转换事件 payload',
-        severity: 'Medium',
-        status: 'Suspected',
-        category: '边界类型',
-        location: 'src/events/adapter.ts',
-        target: '事件桥接',
-        problem: '适配器当前通过 `as unknown as` 强制转换 payload，这正好绕开了数据边界最应该严格的地方。这样会把 schema 漂移一直藏到运行时。',
-        evidence: `// adapter.ts
-const payload = raw as unknown as DomainEvent;
-dispatch(payload);`,
-        fix: `把这个强制转换换成一个在派发前验证结构的窄解析器。
-如果 schema 确实是动态的，就显式建模动态部分，而不是绕过检查器。`,
-        effort: '45 分钟',
-        test: '喂入一个缺少字段的 payload，并断言解析器会在派发前拒绝它。'
-      }
-    ],
-    sections: [
-      {
-        id: 'architecture',
-        icon: '🏗',
-        title: '架构与边界',
-        intro: '边界清楚，依赖方向单向，整体更像一个可以维护的 demo 项目，而不是随手拼接的样板。',
-        checks: [
-          '服务、任务、共享契约拆成独立层，依赖方向一致。',
-          '核心对象通过显式注入传递，而不是依赖全局单例。',
-          '数据流能从入口一路追踪到输出，不存在隐式跳转。'
-        ]
-      },
-      {
-        id: 'security',
-        icon: '🔒',
-        title: '安全',
-        intro: '本节故意放入两条中低风险问题，用来模拟真实审计里常见的认证和敏感数据处理风险。',
-        checks: [
-          '密钥和令牌只在边界处理，未直接回落到日志。',
-          '敏感路径带有明确的失败信号，不靠静默兜底。'
-        ]
-      },
-      {
-        id: 'stability',
-        icon: '⚡',
-        title: '稳定性',
-        intro: '演示报告里保留了一条典型的重试和故障恢复问题，方便展示稳定性维度的写法。',
-        checks: [
-          '启动和关闭流程都给出明确的状态迁移。',
-          '错误路径不靠无限循环掩盖后端故障。'
-        ]
-      },
-      {
-        id: 'performance',
-        icon: '🚀',
-        title: '性能',
-        intro: '这里只保留一个轻量的性能发现，避免演示页面过度堆砌。',
-        checks: [
-          '缓存边界明确，重复请求可复用结果。',
-          '批量和分页策略对外部调用有明显降载作用。'
-        ]
-      },
-      {
-        id: 'testing',
-        icon: '🧪',
-        title: '测试',
-        intro: '测试维度展示一个常见薄弱点：有单测，但边界输入和 fuzz 还没补齐。',
-        checks: [
-          '主路径由真实测试覆盖，而不是只靠模拟。',
-          '集成测试和单元测试的职责划分清楚。'
-        ]
-      },
-      {
-        id: 'maintainability',
-        icon: '📐',
-        title: '可维护性',
-        intro: '这个维度故意保留一个“文件过大、职责混杂”的问题，符合模板里最常见的审查模式。',
-        checks: [
-          '模块命名接近职责，而不是接近临时实现。',
-          '关键路径能在单个文件里快速定位。'
-        ]
-      },
-      {
-        id: 'design',
-        icon: '🎨',
-        title: '设计',
-        intro: '设计维度保持平衡：结构不错，但边界上的一致性还有改进空间。',
-        checks: [
-          '抽象层级不会让调用方承担额外复杂度。',
-          '共享契约尽量集中定义，而不是各自复制。'
-        ]
-      },
-      {
-        id: 'release',
-        icon: '📦',
-        title: '发布',
-        intro: '发布维度适合演示一条“流程完整，但回滚说明不够”的轻量问题。',
-        checks: [
-          'CI 流程存在，并能产生可重复的构建结果。',
-          '发布前后有最小化的验证步骤。'
-        ]
-      },
-      {
-        id: 'documentation',
-        icon: '📖',
-        title: '文档',
-        intro: '文档维度保持低风险示例，主要用来展示模板完整度。',
-        checks: [
-          'README 能快速说明项目用途和入口。',
-          '重要行为有足够的文档提示，而不是完全依赖代码阅读。'
-        ]
-      },
-      {
-        id: 'configuration',
-        icon: '⚙️',
-        title: '配置',
-        intro: '配置维度在演示里是“无发现”，用来展示绿色区块的排版。',
-        checks: [
-          '运行时开关集中在少数几个配置源。',
-          '默认值明确，不靠猜测。'
-        ]
-      },
-      {
-        id: 'observability',
-        icon: '📡',
-        title: '可观测性',
-        intro: '可观测性维度同样保持无发现，重点展示健康的绿色清单。',
-        checks: [
-          '结构化日志便于追踪问题。',
-          '健康检查和关键指标都能快速定位系统状态。'
-        ]
-      },
-      {
-        id: 'fallback',
-        icon: '🛡️',
-        title: '兜底',
-        intro: '这是演示里最“像样”的高风险项：静默兜底在生产里通常不应该存在。',
-        checks: [
-          '仅在本地和测试环境允许使用模拟数据。',
-          '关键失败路径会发出可见信号，而不是继续伪装成功。'
-        ]
-      },
-      {
-        id: 'testing-authenticity',
-        icon: '🎯',
-        title: '测试真实性',
-        intro: '这个维度专门用来展示“测试看起来很多，但是否真的有用”的判断方式。',
-        checks: [
-          '核心测试走真实边界，不只是验证 mock 调用次数。',
-          '测试名称能说明行为，而不是实现细节。'
-        ]
-      },
-      {
-        id: 'type-safety',
-        icon: '🔤',
-        title: '类型安全',
-        intro: '演示中保留一个边界强制转换问题，用来模拟类型安全维度最典型的发现。',
-        checks: [
-          '大部分边界由显式 parser 或 schema 保护。',
-          '错误类型尽量保留丰富上下文，而不是全都抹平。'
-        ]
-      },
-      {
-        id: 'backend-api',
-        icon: '🌐',
-        title: '后端 API',
-        intro: 'API 维度保留了响应格式一致性问题，属于非常适合演示的中低风险项。',
-        checks: [
-          'HTTP 和 WebSocket 的契约尽量复用同一语义模型。',
-          '错误响应风格一致，客户端易于解析。'
-        ]
-      },
-      {
-        id: 'dependency-weight',
-        icon: '🏋️',
-        title: '依赖重量',
-        intro: '依赖维度在演示中只放一条很轻的冗余依赖问题。',
-        checks: [
-          '依赖数量保持克制，避免重复引入功能相近的包。',
-          '大依赖只在真正需要时才保留。'
-        ]
-      },
-      {
-        id: 'code-consistency',
-        icon: '📏',
-        title: '代码一致性',
-        intro: '一致性维度展示命名风格漂移，属于最常见、也最容易演示的审查项。',
-        checks: [
-          'JSON 命名策略统一，不让客户端在风格间切换。',
-          '模块和函数命名遵循统一约定。'
-        ]
-      },
-      {
-        id: 'comment-coverage',
-        icon: '💬',
-        title: '注释覆盖',
-        intro: '这个维度展示“缺少契约注释”的低成本问题，适合做演示的收尾。',
-        checks: [
-          '公共 API 至少有一句话的契约说明。',
-          '复杂逻辑有简短注释，避免阅读者过度猜测。'
-        ]
-      }
-    ],
-    principles: {
-      violated: [
-        { name: '单一职责', count: 1, severity: 'Medium', scope: 'src/core/orchestrator.ts 同时处理路由、缓存失效和序列化' },
-        { name: '快速失败', count: 1, severity: 'High', scope: '静默的模拟数据兜底掩盖了特性开关获取失败' },
-        { name: '一致性', count: 2, severity: 'Low', scope: 'JSON 键名和公共辅助函数文档' }
-      ],
-      respected: [
-        'API、worker 和共享契约层之间的模块边界清晰。',
-        '大部分配置都是显式的，而不是藏在代码里。',
-        '观察到的错误处理把成功路径和失败路径分得很开。',
-        '这份演示报告本身也沿用了正式模板的相同章节顺序。'
-      ]
-    },
-    fixOrder: {
-      immediate: [
-        { title: '把生产环境中的模拟数据兜底改成快速失败', effort: '30 分钟', risk: 'High' },
-        { title: '给 Redis 重试循环加入断路器', effort: '45 分钟', risk: 'Medium' },
-        { title: '统一 HTTP 和 WebSocket 的错误封装', effort: '1 小时', risk: 'Low' }
-      ],
-      later: [
-        { title: '把 orchestrator.ts 拆成更小的边界模块', effort: '4 小时', risk: 'Medium' },
-        { title: '为畸形 manifest 增加 fuzz 目标', effort: '2 小时', risk: 'Medium' },
-        { title: '把摘要 digest 放到版本化缓存后面', effort: '30 分钟', risk: 'Low' },
-        { title: '移除重复的 lodash 依赖', effort: '15 分钟', risk: 'Info' },
-        { title: '为公共辅助函数补上契约注释', effort: '20 分钟', risk: 'Low' }
-      ],
-      wins: [
-        { title: '会话漂移窗口改为可配置', meta: '20 分钟 · 避免误伤登录' },
-        { title: '缓存摘要 digest', meta: '30 分钟 · 消除热路径上的无谓 CPU' },
-        { title: '补上 CI 回滚说明', meta: '15 分钟 · 加快事故响应' },
-        { title: '统一 JSON 键名', meta: '30 分钟 · 简化客户端接入' },
-        { title: '增加解析器 fuzz harness', meta: '2 小时 · 加强输入边界' },
-        { title: '写 API 契约注释', meta: '20 分钟 · 提升可发现性' }
-      ]
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    themeToggle.textContent = next === 'dark' ? '🌙' : '☀️';
+  });
+
+  function toggleCard(row) {
+    const content = row.nextElementSibling;
+    if (content.style.display === 'none') {
+      content.style.display = 'flex';
+      row.querySelector('div:last-child span').textContent = '收起详情 ▴';
+    } else {
+      content.style.display = 'none';
+      row.querySelector('div:last-child span').textContent = '展开详情 ▾';
     }
-  };
-
-  const severityOrder = { Critical: 0, High: 1, Medium: 2, Low: 3, Info: 4 };
-  const severityClass = { Critical: 'critical', High: 'high', Medium: 'medium', Low: 'low', Info: 'info' };
-  const labelMap = {
-    Critical: '严重',
-    High: '高',
-    Medium: '中',
-    Low: '低',
-    Info: '提示',
-    Confirmed: '已确认',
-    Suspected: '待确认',
-    demo: '演示',
-    good: '通过',
-    warn: '警示',
-    strong: '重点'
-  };
-
-  const escapeHtml = (value) =>
-    String(value)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#39;');
-
-  const scoreGrade = (score) => {
-    if (score >= 9.5) return 'S';
-    if (score >= 8.5) return 'A';
-    if (score >= 7.0) return 'B';
-    if (score >= 5.5) return 'C';
-    if (score >= 4.0) return 'D';
-    return 'F';
-  };
-
-  const gradeClass = (grade) => grade.toLowerCase();
-
-  const renderScore = (item, overall = false) => {
-    const grade = scoreGrade(item.score);
-    const pct = Math.max(0, Math.min(100, item.score * 10));
-    const overallClass = overall ? ' overall-row' : '';
-    return `
-      <div class="score-item${overallClass}">
-        <div class="label">${escapeHtml(item.label)}</div>
-        <div class="bar-row">
-          <div class="bar-track">
-            <div class="bar-fill ${gradeClass(grade)}" style="width:${pct}%"></div>
-          </div>
-          <span class="value grade-${gradeClass(grade)}">${item.score.toFixed(1)}</span>
-          <span class="grade grade-${gradeClass(grade)}">${grade}</span>
-        </div>
-        <div class="small">${escapeHtml(item.note)}</div>
-      </div>
-    `;
-  };
-
-  const renderBadge = (label, kind) => `<span class="badge badge-${kind}">${escapeHtml(labelMap[label] || label)}</span>`;
-
-  const renderFindingCard = (finding, index) => `
-    <div class="finding severity-${severityClass[finding.severity]}">
-      <div class="finding-header">
-        <h4>${index + 1}. ${escapeHtml(finding.title)}</h4>
-        ${renderBadge(finding.severity, severityClass[finding.severity])}
-        ${renderBadge(finding.status, finding.status === 'Confirmed' ? 'confirmed' : 'suspected')}
-      </div>
-      <div class="finding-meta">
-        <span>📁 ${escapeHtml(finding.category)}</span>
-        <span>📍 ${escapeHtml(finding.location)}</span>
-        <span>🎯 ${escapeHtml(finding.target)}</span>
-      </div>
-      <div class="problem"><strong>问题：</strong>${escapeHtml(finding.problem)}</div>
-      <pre class="evidence">${escapeHtml(finding.evidence)}</pre>
-      <div class="fix-box">
-        <div class="fix-label">最小修复</div>
-        <code>${escapeHtml(finding.fix)}</code>
-      </div>
-      <div class="fix-box" style="margin-top:6px;background:#fff8e1;border-color:#ffe082">
-        <strong>⏱ 工作量：${escapeHtml(finding.effort)}</strong> &nbsp;·&nbsp; <strong>回归测试：</strong>${escapeHtml(finding.test)}
-      </div>
-    </div>
-  `;
-
-  const renderTopRisks = () => report.topRisks
-    .map((risk, index) => `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${escapeHtml(risk.title)}</td>
-        <td>${renderBadge(risk.severity, severityClass[risk.severity])}</td>
-        <td>${escapeHtml(risk.category)}</td>
-      </tr>
-    `)
-    .join('');
-
-  const renderStat = (num, desc, color = '') => `
-    <div class="stat-card">
-      <div class="num"${color ? ` style="color:${color}"` : ''}>${num}</div>
-      <div class="desc">${escapeHtml(desc)}</div>
-    </div>
-  `;
-
-  const renderSection = (section) => {
-    const items = report.findings.filter((finding) => finding.section === section.id);
-    const count = items.length;
-    const header = count
-      ? `已确认 <span style="font-weight:400;font-size:13px;color:var(--text-secondary)">· ${count} 个发现</span>`
-      : '无发现';
-    const rows = count
-      ? items.map((finding) => `
-          <tr>
-            <td>${escapeHtml(finding.title)}</td>
-            <td style="width:100px">${renderBadge(finding.severity, severityClass[finding.severity])}</td>
-            <td style="width:100px">${renderBadge(finding.status, finding.status === 'Confirmed' ? 'confirmed' : 'suspected')}</td>
-          </tr>
-        `).join('')
-      : `<tr><td colspan="3">本节保留为结构展示，没有额外问题。</td></tr>`;
-
-    return `
-      <section class="report-section" id="${escapeHtml(section.id)}">
-        <h3 class="section-title">${section.icon} ${escapeHtml(section.title)}</h3>
-        <div class="card">
-          <div class="card-header">${header}</div>
-          <div class="card-body" style="padding:0">
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>发现项</th>
-                    <th style="width:100px">严重程度</th>
-                    <th style="width:100px">状态</th>
-                  </tr>
-                </thead>
-                <tbody>${rows}</tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header">✅ 已验证的${escapeHtml(section.title)}实践</div>
-          <div class="card-body">
-            <div class="small" style="margin-bottom:10px">${escapeHtml(section.intro)}</div>
-            <div class="check-list">
-              ${section.checks.map((item) => `<div class="check-item"><span class="check">✓</span>${escapeHtml(item)}</div>`).join('')}
-            </div>
-          </div>
-        </div>
-      </section>
-    `;
-  };
-
-  const renderPrinciples = () => {
-    return report.principles.violated.map((item) => `
-      <tr>
-        <td>${escapeHtml(item.name)}</td>
-        <td>${item.count}</td>
-        <td>${renderBadge(item.severity, severityClass[item.severity])}</td>
-        <td>${escapeHtml(item.scope)}</td>
-      </tr>
-    `).join('');
-  };
-
-  const renderPrinciplesChecks = () =>
-    report.principles.respected
-      .map((item) => `<div class="check-item"><span class="check">✓</span>${escapeHtml(item)}</div>`)
-      .join('');
-
-  const renderFixOrder = () => `
-    <div class="card">
-      <div class="card-header">
-        <span>⚡ 立即修复</span>
-        <span class="badge badge-medium">中优先级</span>
-      </div>
-      <div class="card-body" style="padding:0">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>#</th><th>修复项</th><th>工作量</th><th>风险</th></tr>
-            </thead>
-            <tbody>
-              ${report.fixOrder.immediate.map((item, index) => `
-                <tr>
-                  <td>${index + 1}</td>
-                  <td>${escapeHtml(item.title)}</td>
-                  <td>${escapeHtml(item.effort)}</td>
-                  <td>${escapeHtml(item.risk)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <span>📅 后续修复</span>
-        <span class="badge badge-low">低优先级</span>
-      </div>
-      <div class="card-body" style="padding:0">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>#</th><th>修复项</th><th>工作量</th><th>风险</th></tr>
-            </thead>
-            <tbody>
-              ${report.fixOrder.later.map((item, index) => `
-                <tr>
-                  <td>${index + 1 + report.fixOrder.immediate.length}</td>
-                  <td>${escapeHtml(item.title)}</td>
-                  <td>${escapeHtml(item.effort)}</td>
-                  <td>${escapeHtml(item.risk)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  `;
-
-  const renderQuickWins = () => report.fixOrder.wins.map((item) => `
-    <div class="win-card">
-      <div class="win-title">${escapeHtml(item.title)}</div>
-      <div class="win-meta">${escapeHtml(item.meta)}</div>
-    </div>
-  `).join('');
-
-  document.getElementById('report-title').textContent = `${report.project} 审计报告`;
-  document.getElementById('report-meta').innerHTML = `
-    <span>📅 ${escapeHtml(report.date)}</span>
-    <span>🔍 ${escapeHtml(report.mode)}</span>
-    <span>🛠 ${escapeHtml(report.reviewer)}</span>
-    <span>⚠️ 演示数据</span>
-  `;
-
-  document.getElementById('score-grid').innerHTML = report.scores.map((item) => renderScore(item)).join('') + renderScore({
-    label: '总评',
-    score: 7.2,
-    note: '模板已经可以直接演示，内容是合成数据，结果也刻意不代表真实评估。'
-  }, true);
-
-  document.getElementById('summary-copy').innerHTML = report.summary.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('');
-  document.getElementById('summary-pills').innerHTML = report.pills.map((pill) => `<span class="pill ${pill.kind}">${escapeHtml(pill.text)}</span>`).join('');
-
-  document.getElementById('stats-row').innerHTML = [
-    renderStat(report.stats.total, '总发现数'),
-    renderStat(report.stats.critical, '严重', 'var(--badge-critical)'),
-    renderStat(report.stats.high, '高', 'var(--badge-high)'),
-    renderStat(report.stats.medium, '中', 'var(--badge-medium)'),
-    renderStat(report.stats.low, '低', 'var(--badge-low)'),
-    renderStat(report.stats.info, '提示', 'var(--badge-info)')
-  ].join('');
-
-  document.getElementById('top-risks-body').innerHTML = renderTopRisks();
-  document.getElementById('findings-list').innerHTML = report.findings
-    .slice()
-    .sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity])
-    .map((finding, index) => renderFindingCard(finding, index))
-    .join('');
-  document.getElementById('section-groups').innerHTML = report.sections.map(renderSection).join('');
-  document.getElementById('principles-violated').innerHTML = renderPrinciples();
-  document.getElementById('principles-respected').innerHTML = renderPrinciplesChecks();
-  document.getElementById('fix-order-root').innerHTML = renderFixOrder();
-  document.getElementById('quick-wins').innerHTML = renderQuickWins();
-
-  const sections = document.querySelectorAll('.report-section[id]');
-  const navLinks = document.querySelectorAll('.sidebar-nav a');
-  if (navLinks.length > 0) {
-    navLinks[0].classList.add('active');
   }
-  const observer = new IntersectionObserver((entries) => {
-    let activeId = null;
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) activeId = entry.target.id;
+
+  function copySnippet(btn) {
+    btn.textContent = '已复制!';
+    setTimeout(() => btn.textContent = '复制', 1500);
+  }
+
+  const searchBox = document.getElementById('searchBox');
+  searchBox.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    document.querySelectorAll('.console-card').forEach(card => {
+      const text = card.textContent.toLowerCase();
+      card.style.display = text.includes(term) ? '' : 'none';
     });
-    if (activeId) {
-      navLinks.forEach((link) => {
-        link.classList.toggle('active', link.getAttribute('href') === `#${activeId}`);
-      });
-    }
-  }, { rootMargin: '-12% 0px -68% 0px' });
+  });
 
-  sections.forEach((section) => observer.observe(section));
-  navLinks.forEach((link) => {
-    link.addEventListener('click', () => {
-      navLinks.forEach((item) => item.classList.remove('active'));
-      link.classList.add('active');
+  document.querySelectorAll('.seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      document.querySelectorAll('.console-card').forEach(card => {
+        if (filter === 'all' || card.dataset.severity === filter) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
     });
   });
 </script>

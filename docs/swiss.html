@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fuck My Shit Mountain — 草稿二：瑞士极简 (Swiss Editorial Paper)</title>
+<title>Fuck My Shit Mountain - 演示审计报告 (Swiss Editorial)</title>
 <style>
   :root {
     --bg-page: #f8fafc;
@@ -15,24 +15,16 @@
     --text-muted: #64748b;
     --text-dim: #94a3b8;
     
-    --accent: #0f172a;
-    --accent-blue: #2563eb;
-    
     --crit-text: #dc2626;
     --crit-bg: #fef2f2;
     --crit-border: #fecaca;
-
     --high-text: #d97706;
     --high-bg: #fffbeb;
     --high-border: #fde68a;
-
     --med-text: #2563eb;
     --med-bg: #eff6ff;
     --med-border: #bfdbfe;
-
     --success-text: #059669;
-    --success-bg: #ecfdf5;
-    --success-border: #a7f3d0;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -44,7 +36,21 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Header */
+  .demo-theme-nav {
+    position: fixed; top: 14px; right: 20px; z-index: 9999;
+    background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 999px;
+    padding: 6px 14px; display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); font-size: 13px;
+  }
+  .demo-theme-nav .nav-title { color: #94a3b8; font-weight: 600; margin-right: 4px; }
+  .demo-theme-nav a {
+    color: #e2e8f0; text-decoration: none; padding: 4px 10px; border-radius: 999px;
+    transition: all 0.15s; font-weight: 500;
+  }
+  .demo-theme-nav a:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+  .demo-theme-nav a.active { background: #0f172a; color: #fff; font-weight: 700; border: 1px solid rgba(255,255,255,0.3); }
+
   .top-banner {
     background: var(--bg-surface);
     border-bottom: 1px solid var(--border-subtle);
@@ -65,7 +71,6 @@
     border-radius: 4px; font-size: 0.75rem; font-weight: 500;
   }
 
-  /* Main Layout Grid */
   .layout-wrapper {
     max-width: 1400px; margin: 2.5rem auto 5rem; padding: 0 2rem;
     display: grid; grid-template-columns: 360px 1fr; gap: 3rem;
@@ -74,7 +79,6 @@
     .layout-wrapper { grid-template-columns: 1fr; gap: 2rem; }
   }
 
-  /* Left Rail: Sticky Dashboard */
   .left-rail { position: sticky; top: 5rem; height: fit-content; display: flex; flex-direction: column; gap: 1.75rem; }
 
   .summary-box {
@@ -97,7 +101,6 @@
     padding: 0.2rem 0.75rem; border-radius: 4px; color: var(--text-heading);
   }
 
-  /* Dimension Bars */
   .dimension-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.5rem; }
   .dimension-table tr { border-bottom: 1px solid var(--border-subtle); }
   .dimension-table tr:last-child { border-bottom: none; }
@@ -108,10 +111,7 @@
   .mini-bar-fill { height: 100%; background: var(--text-heading); }
   .dim-score-val { font-family: ui-monospace, monospace; font-weight: 700; text-align: right; width: 45px; }
 
-  /* Stat Summary Strip */
-  .stat-grid-condensed {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;
-  }
+  .stat-grid-condensed { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
   .stat-cell {
     background: var(--bg-surface); border: 1px solid var(--border-subtle);
     border-radius: 6px; padding: 0.85rem 1rem;
@@ -119,28 +119,20 @@
   .stat-cell-num { font-size: 1.5rem; font-weight: 800; color: var(--text-heading); line-height: 1.2; }
   .stat-cell-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
 
-  /* Right Content Stream */
-  .content-stream { display: flex; flex-direction: column; gap: 2.5rem; }
-
+  .content-stream { display: flex; flex-direction: column; gap: 2rem; }
   .section-headline {
     font-size: 1.5rem; font-weight: 800; color: var(--text-heading);
-    letter-spacing: -0.02em; padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--text-heading);
+    letter-spacing: -0.02em; padding-bottom: 0.75rem; border-bottom: 2px solid var(--text-heading);
     display: flex; justify-content: space-between; align-items: baseline;
   }
 
-  /* Editorial Finding Item */
   .editorial-card {
     background: var(--bg-surface); border: 1px solid var(--border-subtle);
     border-radius: 8px; padding: 2rem;
     box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 10px 24px -12px rgba(0,0,0,0.04);
     display: flex; flex-direction: column; gap: 1.25rem;
-    position: relative;
   }
-  .card-topline {
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 1rem; flex-wrap: wrap;
-  }
+  .card-topline { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
   .pill-group { display: flex; gap: 0.5rem; align-items: center; }
   .pill {
     font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
@@ -148,44 +140,22 @@
   }
   .pill-crit { background: var(--crit-bg); color: var(--crit-text); border-color: var(--crit-border); }
   .pill-high { background: var(--high-bg); color: var(--high-text); border-color: var(--high-border); }
-  .pill-med { background: var(--med-bg); color: var(--med-text); border-color: var(--med-border); }
   .pill-scope { background: #f1f5f9; color: var(--text-muted); }
 
-  .finding-title-clean {
-    font-size: 1.25rem; font-weight: 700; color: var(--text-heading);
-    letter-spacing: -0.015em; line-height: 1.4;
-  }
-  .file-anchor {
-    font-family: ui-monospace, monospace; font-size: 0.8rem;
-    color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem;
-  }
+  .finding-title-clean { font-size: 1.25rem; font-weight: 700; color: var(--text-heading); }
+  .file-anchor { font-family: ui-monospace, monospace; font-size: 0.8rem; color: var(--text-muted); }
 
-  .field-desc {
-    font-size: 0.95rem; color: var(--text-body); line-height: 1.7;
-  }
-
-  /* Code Comparison Panels */
-  .diff-box {
-    border: 1px solid var(--border-subtle); border-radius: 6px; overflow: hidden;
-  }
+  .diff-box { border: 1px solid var(--border-subtle); border-radius: 6px; overflow: hidden; }
   .diff-header {
     background: #f8fafc; border-bottom: 1px solid var(--border-subtle);
     padding: 0.5rem 1rem; font-size: 0.75rem; font-weight: 700;
-    text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.04em;
-    display: flex; justify-content: space-between;
+    text-transform: uppercase; color: var(--text-muted); display: flex; justify-content: space-between;
   }
   .diff-body {
-    background: #ffffff; padding: 1rem 1.25rem; font-family: ui-monospace, "SF Mono", monospace;
+    background: #ffffff; padding: 1rem 1.25rem; font-family: ui-monospace, monospace;
     font-size: 0.85rem; color: #1e293b; overflow-x: auto; line-height: 1.6;
   }
 
-  .test-guide-box {
-    background: #f8fafc; border-left: 3px solid var(--text-heading);
-    padding: 1rem 1.25rem; font-size: 0.875rem;
-  }
-  .test-guide-title { font-weight: 700; color: var(--text-heading); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.35rem; }
-
-  /* Footer */
   .footer {
     border-top: 1px solid var(--border-subtle); padding: 2.5rem 0;
     text-align: center; font-size: 0.85rem; color: var(--text-muted);
@@ -194,22 +164,27 @@
 </head>
 <body>
 
+<div class="demo-theme-nav">
+  <span class="nav-title">🎨 体验不同模板:</span>
+  <a href="index.html">极光控制台 (新版)</a>
+  <a href="obsidian.html">黑曜极客 (新版)</a>
+  <a href="swiss.html" class="active">瑞士极简 (新版)</a>
+  <a href="classic.html">经典旧版</a>
+</div>
+
 <header class="top-banner">
   <div class="doc-meta">
     <div class="doc-seal">AUDIT REPORT</div>
     <span class="doc-title">NodeLite Core Service (v2.4.0)</span>
-    <span class="tag-label">草稿 2 · 瑞士极简白纸风</span>
+    <span class="tag-label">瑞士极简 (Swiss Editorial Paper) 演示</span>
   </div>
   <div>
-    <span class="tag-label">📅 2026-10-12 · 全量体检</span>
+    <span class="tag-label">📅 2026-10-12 · 全量体检 (演示数据)</span>
   </div>
 </header>
 
 <main class="layout-wrapper">
-
-  <!-- Left Sidebar (Health Card & Dimensions) -->
   <aside class="left-rail">
-
     <div class="summary-box">
       <div class="summary-title">工程健康度综合评级</div>
       <div class="big-score-display">
@@ -220,7 +195,7 @@
         <div class="grade-stamp">B</div>
       </div>
       <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-        代码结构清晰，但认证层存在隐式降级漏洞，核心数据库操作缺少事务边界与超时熔断控制。
+        整体代码规范，但认证层存在隐式默认密钥降级，支付与库存写入链路缺乏严格的事务与原子锁隔离。
       </p>
 
       <div class="summary-title" style="margin-top: 1.5rem;">核心维度诊断明细</div>
@@ -255,19 +230,13 @@
           <td class="dim-bar-cell"><div class="mini-bar-track"><div class="mini-bar-fill" style="width: 70%"></div></div></td>
           <td class="dim-score-val">7.0</td>
         </tr>
-        <tr>
-          <td class="dim-label">发布就绪</td>
-          <td class="dim-bar-cell"><div class="mini-bar-track"><div class="mini-bar-fill" style="width: 75%"></div></div></td>
-          <td class="dim-score-val">7.5</td>
-        </tr>
       </table>
     </div>
 
-    <!-- 统计卡片 -->
     <div class="stat-grid-condensed">
       <div class="stat-cell">
         <div class="stat-cell-num" style="color: var(--crit-text)">1</div>
-        <div class="stat-cell-label">Critical 致命隐患</div>
+        <div class="stat-cell-label">Critical 致命缺陷</div>
       </div>
       <div class="stat-cell">
         <div class="stat-cell-num" style="color: var(--high-text)">3</div>
@@ -282,20 +251,14 @@
         <div class="stat-cell-label">发现项总数</div>
       </div>
     </div>
-
   </aside>
 
-  <!-- Right Content Flow -->
   <section class="content-stream">
-
-    <div>
-      <div class="section-headline">
-        <span>重点缺陷审查条目</span>
-        <span style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted);">按影响度排定优先级</span>
-      </div>
+    <div class="section-headline">
+      <span>重点缺陷审查条目</span>
+      <span style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted);">按影响度排定优先级</span>
     </div>
 
-    <!-- Finding 1 -->
     <article class="editorial-card">
       <div class="card-topline">
         <div class="pill-group">
@@ -313,8 +276,8 @@
         📁 <code>src/config/auth.ts:15</code> · 方法: <code>getJwtSecret()</code>
       </div>
 
-      <p class="field-desc">
-        <strong>问题剖析：</strong> 函数内部使用或操作符 (<code>||</code>) 设定了 fallback 默认密钥。在容器部署或云原生环境因环境变量注入延迟时，服务将使用静态字符串签发与验签。攻击者可脱机伪造任意声明（包括超级管理员权限）的合法 Token，完全穿透鉴权系统。
+      <p>
+        <strong>问题剖析：</strong> 函数内部使用或操作符 (<code>||</code>) 设定了 fallback 默认密钥。在容器环境未设定 <code>JWT_SECRET</code> 时，服务使用公开常量完成签名验签。攻击者可离线签发任意管理员 Token，彻底绕过鉴权。
       </p>
 
       <div class="diff-box">
@@ -330,14 +293,8 @@
   return secret;
 }</code></pre>
       </div>
-
-      <div class="test-guide-box">
-        <div class="test-guide-title">建议回归测试用例 (Regression Test)</div>
-        <div>编写单元测试：在未设定 <code>process.env.JWT_SECRET</code> 的情况下调用 <code>getJwtSecret()</code>，断言其必须抛出致命启动异常并阻止服务监听。</div>
-      </div>
     </article>
 
-    <!-- Finding 2 -->
     <article class="editorial-card">
       <div class="card-topline">
         <div class="pill-group">
@@ -355,8 +312,8 @@
         📁 <code>src/services/inventory.ts:88</code> · 方法: <code>deductStock()</code>
       </div>
 
-      <p class="field-desc">
-        <strong>问题剖析：</strong> 查询库存与写入扣减分为两条独立的无锁 SQL。高并发压测场景下两个请求同时读取到相同的库存数，导致商品库存被扣成负数。
+      <p>
+        <strong>问题剖析：</strong> 查询库存与写入扣减拆分为两条无锁 SQL。高并发抢购场景下两个并发请求同时读取到相同的库存数，导致商品被扣成负库存。
       </p>
 
       <div class="diff-box">
@@ -364,19 +321,16 @@
           <span>推荐原子更新修复</span>
           <span>SQL</span>
         </div>
-        <pre class="diff-body"><code>-- 使用原子条件更新替代应用层先查后改
-UPDATE inventory 
+        <pre class="diff-body"><code>UPDATE inventory 
 SET stock = stock - :quantity 
 WHERE product_id = :id AND stock >= :quantity;</code></pre>
       </div>
     </article>
-
   </section>
-
 </main>
 
 <footer class="footer">
-  Fuck My Shit Mountain · 瑞士极简白纸风模板草稿 · 严谨、权威且纯净的工程报告
+  Fuck My Shit Mountain · GitHub Pages 在线演示 · 瑞士极简白纸风
 </footer>
 
 </body>
